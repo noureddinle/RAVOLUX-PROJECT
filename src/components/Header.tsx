@@ -87,26 +87,27 @@ export function Header({ darkMode, toggleDarkMode, cartItemCount = 0 }: HeaderPr
             <span className="sr-only">Toggle theme</span>
           </Button>
 
-          {/* Account Dropdown */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="h-9 w-9">
-                <User className="h-4 w-4" />
-                <span className="sr-only">Account</span>
+          {/* Account Links */}
+          <div className="hidden md:flex items-center space-x-2">
+            <Link to="/login">
+              <Button variant="ghost" size="sm">
+                Sign In
               </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                <Link to="/login">Sign In</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link to="/register">Create Account</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link to="/account">My Account</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+            </Link>
+            <Link to="/register">
+              <Button size="sm" className="bg-gradient-secondary text-secondary-foreground">
+                Register
+              </Button>
+            </Link>
+          </div>
+
+          {/* Mobile Account Button */}
+          <Link to="/login" className="md:hidden">
+            <Button variant="ghost" size="sm" className="h-9 w-9">
+              <User className="h-4 w-4" />
+              <span className="sr-only">Account</span>
+            </Button>
+          </Link>
 
           {/* Shopping Cart */}
           <Button variant="ghost" size="sm" className="relative h-9 w-9">
