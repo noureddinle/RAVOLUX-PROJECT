@@ -50,7 +50,7 @@ export function RelatedProducts({ categoryId, currentProductId }: RelatedProduct
 
         <div className="grid md:grid-cols-2  lg:grid-cols-3  gap-8">
           {relatedProducts.map((product) => (
-            <Card key={product.id} className="group hover:shadow-xl  transition-all duration-300">
+            <Card key={product.id} className="group hover:shadow-xl  transition-all duration-300 border-none">
               <CardHeader className="p-0 ">
                 <div className="relative overflow-hidden rounded-t-lg">
                   <Image

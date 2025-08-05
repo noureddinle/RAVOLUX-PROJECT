@@ -159,7 +159,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
           <div className="space-y-4">
             <div className="flex items-center space-x-4">
               <label className="text-sm font-medium">Quantity:</label>
-              <div className="flex items-center border rounded-lg">
+              <div className="flex items-center border border-gray-200 rounded-lg">
                 <Button variant="ghost" size="sm" onClick={() => handleQuantityChange(-1)} disabled={quantity <= 1}>
                   <Minus className="h-4 w-4" />
                 </Button>
@@ -176,19 +176,19 @@ export function ProductDetail({ product }: ProductDetailProps) {
             </div>
 
             <div className="flex space-x-4">
-              <Button size="lg" className="flex-1" onClick={handleAddToCart} disabled={!product.inStock}>
+              <Button size="lg" className="flex-1 border border-gray-200 hover:bg-gray-100" onClick={handleAddToCart} disabled={!product.inStock}>
                 <ShoppingCart className="h-5 w-5 mr-2" />
                 Add to Cart
               </Button>
-              <Button variant="outline" size="lg" onClick={() => setIsWishlisted(!isWishlisted)}>
+              <Button className="border border-gray-200 hover:bg-gray-100" variant="outline" size="lg" onClick={() => setIsWishlisted(!isWishlisted)}>
                 <Heart className={`h-5 w-5 ${isWishlisted ? "fill-current text-red-500" : ""}`} />
               </Button>
-              <Button variant="outline" size="lg">
+              <Button className="border border-gray-200 hover:bg-gray-100" variant="outline" size="lg">
                 <Share2 className="h-5 w-5" />
               </Button>
             </div>
 
-            <Button variant="outline" size="lg" className="w-full bg-transparent">
+            <Button variant="outline" size="lg" className="w-full bg-transparent border border-gray-200 hover:bg-gray-100">
               <Phone className="h-5 w-5 mr-2" />
               Call for Bulk Pricing
             </Button>
@@ -225,15 +225,15 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
       {/* Product Details Tabs */}
       <div className="mt-16">
-        <Tabs defaultValue="description" className="w-full">
+        <Tabs defaultValue="description" className="w-full ">
           <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="description">Description</TabsTrigger>
-            <TabsTrigger value="specifications">Specifications</TabsTrigger>
-            <TabsTrigger value="shipping">Shipping & Returns</TabsTrigger>
+            <TabsTrigger className="py-4 hover:bg-gray-100" value="description">Description</TabsTrigger>
+            <TabsTrigger className="py-4 hover:bg-gray-100" value="specifications">Specifications</TabsTrigger>
+            <TabsTrigger className="py-4 hover:bg-gray-100" value="shipping">Shipping & Returns</TabsTrigger>
           </TabsList>
 
           <TabsContent value="description" className="mt-8">
-            <Card>
+            <Card className="border border-gray-200"> 
               <CardContent className="p-8">
                 <h3 className="text-2xl font-bold mb-4">Product Description</h3>
                 <p className="text-gray-700 mb-6 leading-relaxed">{product.description}</p>
@@ -252,7 +252,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
           </TabsContent>
 
           <TabsContent value="specifications" className="mt-8">
-            <Card>
+            <Card className="border border-gray-200">
               <CardContent className="p-8">
                 <h3 className="text-2xl font-bold mb-6">Technical Specifications</h3>
                 <div className="grid gap-4">
@@ -268,7 +268,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
           </TabsContent>
 
           <TabsContent value="shipping" className="mt-8">
-            <Card>
+            <Card className="border border-gray-200">
               <CardContent className="p-8">
                 <h3 className="text-2xl font-bold mb-6">Shipping & Returns</h3>
                 <div className="space-y-6">

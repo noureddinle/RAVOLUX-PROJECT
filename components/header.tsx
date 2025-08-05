@@ -1,9 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -13,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Search, Menu, Phone, Mail, MapPin, ShoppingCart, User, LogOut, Settings } from "lucide-react"
+import { Menu, Phone, Mail, MapPin, ShoppingCart, User, LogOut, Settings } from "lucide-react"
 import { useCart } from "@/hooks/use-cart"
 import { useAuth } from "@/hooks/use-auth"
 import { AuthModal } from "@/components/auth-modal"
@@ -22,6 +21,7 @@ import { toast } from "@/hooks/use-toast"
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
   const { items } = useCart()
   const { user, login, logout, isAuthenticated, isAdmin } = useAuth()
   const itemCount = items.reduce((total, item) => total + item.quantity, 0)
@@ -45,36 +45,24 @@ export function Header() {
     })
   }
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY
+      const heroHeight = window.innerHeight
+      setIsScrolled(scrollPosition > heroHeight * 0.8)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 shadow-sm">
-        {/* Top utility bar */}
-        <div className="bg-slate-900 text-white">
-          <div className="container mx-auto px-4 py-2">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center space-x-3 md:space-x-6">
-                <div className="flex items-center space-x-2">
-                  <Phone className="h-4 w-4" />
-                  <span className="font-medium">+1 (555) 123-4567</span>
-                </div>
-                <div className="hidden md:flex items-center space-x-2">
-                  <Mail className="h-4 w-4" />
-                  <span>info@lightpro.com</span>
-                </div>
-                <div className="hidden lg:flex items-center space-x-2">
-                  <MapPin className="h-4 w-4" />
-                  <span>Los Angeles, CA</span>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <Badge variant="secondary" className="bg-primary/20 text-primary-foreground border-primary/30 text-xs">
-                  Free Shipping $500+
-                </Badge>
-              </div>
-            </div>
-          </div>
-        </div>
-
+      <header className={`sticky top-0 z-[100] w-full transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-md' 
+          : 'bg-transparent border-b border-transparent'
+      }`}>
         {/* Main navigation */}
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16 md:h-22">
@@ -92,7 +80,11 @@ export function Header() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-slate-700 hover:text-blue-600 font-medium transition-colors px-4 py-2"
+                  className={`text-sm font-medium transition-colors px-4 py-2 ${
+                    isScrolled 
+                      ? 'text-slate-700 hover:text-blue-600' 
+                      : 'text-white hover:text-blue-200'
+                  }`}
                 >
                   {item.name}
                 </Link>
@@ -101,20 +93,13 @@ export function Header() {
 
             {/* Right side actions */}
             <div className="flex items-center space-x-2 md:space-x-4">
-              {/* Search - Hidden on mobile */}
-              <div className="hidden md:flex items-center">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                  <Input
-                    placeholder="Search products..."
-                    className="pl-10 w-48 lg:w-64 border-slate-200 focus:border-blue-500 focus:ring-blue-500"
-                  />
-                </div>
-              </div>
-
               {/* Cart */}
               <Link href="/cart" className="relative">
-                <Button variant="ghost" size="icon" className="text-slate-700">
+                <Button variant="ghost" size="icon" className={`hover:bg-white/20 transition-colors ${
+                  isScrolled 
+                    ? 'text-slate-700 hover:text-blue-600 hover:bg-white/50' 
+                    : 'text-white hover:text-blue-200'
+                }`}>
                   <ShoppingCart className="h-5 w-5 md:h-6 md:w-6" />
                   {itemCount > 0 && (
                     <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
@@ -128,7 +113,11 @@ export function Header() {
               {isAuthenticated ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-slate-700">
+                    <Button variant="ghost" size="icon" className={`hover:bg-white/20 transition-colors ${
+                      isScrolled 
+                        ? 'text-slate-700 hover:text-blue-600 hover:bg-white/50' 
+                        : 'text-white hover:text-blue-200'
+                    }`}>
                     <User className="h-5 w-5 md:h-6 md:w-6" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -156,33 +145,39 @@ export function Header() {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <Button variant="ghost" size="icon" className="text-slate-700" onClick={() => setShowAuthModal(true)}>
+                <Button variant="ghost" size="icon" className={`hover:bg-white/20 transition-colors ${
+                  isScrolled 
+                    ? 'text-slate-700 hover:text-blue-600 hover:bg-white/50' 
+                    : 'text-white hover:text-blue-200'
+                }`} onClick={() => setShowAuthModal(true)}>
                   <User className="h-5 w-5 md:h-6 md:w-6" />
                 </Button>
               )}
 
               {/* CTA Button - Hidden on small screens */}
               <div className="hidden md:flex items-center">
-                <Button variant="outline" className="border-slate-300 text-slate-700 hover:bg-slate-50 bg-transparent">
-                  Get Quote
+                <Button variant="outline" className={`transition-colors ${
+                  isScrolled 
+                    ? 'border-slate-300 text-slate-700 hover:bg-white hover:text-blue-600 bg-transparent' 
+                    : 'border-white/30 text-white hover:bg-white/20 hover:text-white'
+                }`}>
+                  Contact Us
                 </Button>
               </div>
 
               {/* Mobile menu trigger */}
               <Sheet open={isOpen} onOpenChange={setIsOpen}>
                 <SheetTrigger asChild className="lg:hidden">
-                  <Button variant="ghost" size="icon" className="text-slate-700">
+                  <Button variant="ghost" size="icon" className={`hover:bg-white/20 transition-colors ${
+                    isScrolled 
+                      ? 'text-slate-700 hover:text-blue-600 hover:bg-white/50' 
+                      : 'text-white hover:text-blue-200'
+                  }`}>
                     <Menu className="h-6 w-6" />
                   </Button>
                 </SheetTrigger>
                 <SheetContent side="right" className="w-80 bg-white">
                   <div className="flex flex-col space-y-6 mt-8">
-                    {/* Mobile Search */}
-                    <div className="relative">
-                      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
-                      <Input placeholder="Search products..." className="pl-10 border-slate-200" />
-                    </div>
-
                     {/* User Info */}
                     {isAuthenticated && (
                       <div className="p-4 bg-slate-50 rounded-lg">

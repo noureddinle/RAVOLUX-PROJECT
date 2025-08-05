@@ -5,23 +5,23 @@ import { Badge } from "@/components/ui/badge"
 import { Play, Star, Users, Award, Truck } from "lucide-react"
 import Image from "next/image"
 import { motion } from "framer-motion"
+import heroImage from "@/assets/images/pexels-jibarofoto-3689547.jpg"
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center  overflow-hidden ">
+    <section className="relative min-h-screen flex overflow-hidden -mt-16 pt-16">
       {/* Background Image */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat">
         <Image
-          src="/placeholder.svg?height=1080&width=1920"
+          src={heroImage}
           alt="Professional stage lighting setup"
           fill
-          className="object-cover opacity-30"
+          className="object-cover bg-center"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 to-purple-900/60" />
       </div>
 
-      <div className="container mx-auto px-4 py-20 relative z-10">
+      <div className="container mx-auto px-4 py-10 relative z-10">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
           <motion.div
@@ -30,19 +30,15 @@ export function HeroSection() {
             transition={{ duration: 0.8 }}
             className="text-white"
           >
-            <Badge variant="secondary" className="mb-4 bg-primary/20 text-primary-foreground border-primary/30">
-              Industry Leader Since 1995
-            </Badge>
-
             <h1 className="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
               Professional
               <span className="gradient-text block">Stage Lighting</span>
               Solutions
             </h1>
 
-            <p className="text-xl text-gray-300 mb-8 leading-relaxed">
+            <p className="text-1xl text-white-300 mb-8  text-center">
               Transform your events with cutting-edge lighting technology. We import and distribute the world's finest
-              stage lighting equipment, backed by expert technical support and unmatched industry experience.
+              stage lighting equipment.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 mb-12">
@@ -52,14 +48,8 @@ export function HeroSection() {
             </div>
 
             {/* Trust Indicators */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="text-center">
-                <div className="flex items-center justify-center mb-2">
-                  <Star className="h-6 w-6 text-yellow-400 mr-1" />
-                  <span className="text-2xl font-bold">4.9</span>
-                </div>
-                <p className="text-sm text-gray-400">Customer Rating</p>
-              </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+
               <div className="text-center">
                 <div className="flex items-center justify-center mb-2">
                   <Users className="h-6 w-6 text-blue-400 mr-1" />

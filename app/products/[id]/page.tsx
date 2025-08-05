@@ -67,7 +67,6 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     <div className="min-h-screen bg-background">
       <ProductDetail product={product} />
       <RelatedProducts categoryId={product.category} currentProductId={product.id} />
-      <ProductReviews productId={product.id} />
     </div>
   )
 }

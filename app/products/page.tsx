@@ -177,34 +177,26 @@ export default function ProductsPage() {
               placeholder="Search products..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 border-gray-200 focus:border-gray-200 focus:ring-0 focus:ring-offset-0"
             />
           </div>
         </div>
 
         {/* Sort */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 border-gray-200 focus:border-gray-200 focus:ring-0 focus:ring-offset-0">
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-48">
+            <SelectTrigger className="w-48 border-gray-200 focus:border-gray-200 focus:ring-0 focus:ring-offset-0">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="name">Name (A-Z)</SelectItem>
-              <SelectItem value="price-low">Price (Low to High)</SelectItem>
-              <SelectItem value="price-high">Price (High to Low)</SelectItem>
-              <SelectItem value="rating">Highest Rated</SelectItem>
+            <SelectContent className="bg-white border-gray-200 focus:border-gray-200 focus:ring-0 focus:ring-offset-0 cursor-pointer">
+              <SelectItem value="name" className="cursor-pointer">Name (A-Z)</SelectItem>
+              <SelectItem value="price-low" className="cursor-pointer">Price (Low to High)</SelectItem>
+              <SelectItem value="price-high" className="cursor-pointer">Price (High to Low)</SelectItem>
+              <SelectItem value="rating" className="cursor-pointer">Highest Rated</SelectItem>
             </SelectContent>
           </Select>
 
-          {/* View Mode */}
-          <div className="flex items-center space-x-2">
-            <Button variant={viewMode === "grid" ? "default" : "outline"} size="sm" onClick={() => setViewMode("grid")}>
-              <Grid className="h-4 w-4" />
-            </Button>
-            <Button variant={viewMode === "list" ? "default" : "outline"} size="sm" onClick={() => setViewMode("list")}>
-              <List className="h-4 w-4" />
-            </Button>
-          </div>
+          
         </div>
       </div>
 
@@ -222,7 +214,7 @@ export default function ProductsPage() {
         }`}
       >
         {filteredProducts.map((product) => (
-          <Card key={product.id} className="group hover:shadow-xl transition-all duration-300">
+          <Card key={product.id} className="group hover:shadow-xl transition-all duration-300 border-none">
             <CardHeader className="p-0">
               <div className="relative overflow-hidden rounded-t-lg">
                 <Image
