@@ -1,0 +1,116 @@
+import Link from "next/link"
+import { ArrowLeft } from 'lucide-react'
+
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { getOrder } from "@/lib/data"
+import { notFound } from "next/navigation"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+
+export default async function OrderDetailsPage({ params }: { params: { id: string } }) {
+  const order = await getOrder(params.id)
+
+  if (!order) {
+    notFound()
+  }
+
+  const getStatusBadgeVariant = (status: string) => {
+    switch (status) {
+      case 'Completed':
+        return 'default';
+      case 'Pending':
+        return 'secondary';
+      case 'Cancelled':
+        return 'destructive';
+      default:
+        return 'outline';
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Page header and back button */}
+      <div className="flex items-center gap-4">
+        <Button variant="outline" size="icon" asChild>
+          <Link href="/dashboard/orders">
+            <ArrowLeft className="h-4 w-4" />
+            <span className="sr-only">Back to Orders</span>
+          </Link>
+        </Button>
+        <h1 className="text-2xl font-bold">Order #{order.id}</h1>
+      </div>
+
+      {/* This grid holds two main information cards */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {/* Card for Customer Details and Order Information */}
+        <Card className="lg:col-span-2">
+          <CardContent className="p-6 grid gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Sub-section for Customer Details */}
+              <div>
+                <h2 className="text-lg font-semibold">Customer Details</h2>
+                <p className="text-muted-foreground">
+                  <Link href={`mailto:${order.customerEmail}`} className="text-blue-600 underline">
+                    {order.customerEmail}
+                  </Link>
+                </p>
+                <p className="text-muted-foreground">{order.deliveryAddress}</p>
+              </div>
+              {/* Sub-section for Order Information */}
+              <div>
+                <h2 className="text-lg font-semibold">Order Information</h2>
+                <p className="text-muted-foreground">Status: <Badge variant={getStatusBadgeVariant(order.status)}>{order.status}</Badge></p>
+                <p className="text-muted-foreground">Created: {order.created}</p>
+                <p className="text-muted-foreground">Updated: {order.updated}</p>
+              </div>
+            </div>
+            <Separator /> {/* Visual separator */}
+            <h2 className="text-lg font-semibold">Products</h2>
+            {/* Table for Products in Order */}
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Product</TableHead>
+                  <TableHead>Quantity</TableHead>
+                  <TableHead>Price (per Item)</TableHead>
+                  <TableHead className="text-right">Total Price</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {order.items.map((item) => (
+                  <TableRow key={item.productId}>
+                    <TableCell className="font-medium">{item.productName}</TableCell>
+                    <TableCell>{item.quantity}</TableCell>
+                    <TableCell>${item.pricePerItem.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">${item.totalPrice.toFixed(2)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+
+        {/* Card for Order Summary */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Order Summary</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-4">
+            {/* Summary details */}
+            <p className="text-muted-foreground">Total Items: {order.items.length}</p>
+            <p className="text-muted-foreground">Total Price: ${order.items.reduce((acc, item) => acc + item.totalPrice, 0).toFixed(2)}</p>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}

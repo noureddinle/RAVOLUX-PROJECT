@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "module": "commonjs",
+    "outDir": "dist",
+    "rootDir": "./",
     "lib": [
       "dom",
       "dom.iterable",
@@ -10,8 +13,7 @@
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -33,9 +35,12 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "server.ts",
+    "src/**/*"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist"
   ]
 }

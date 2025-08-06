@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,123 +11,57 @@ import Image from "next/image"
 import Link from "next/link"
 import { useCart } from "@/hooks/use-cart"
 import { toast } from "@/hooks/use-toast"
-
-const allProducts = [
-  {
-    id: "1",
-    name: "LED Moving Head Spot",
-    model: "MH-350X",
-    brand: "ProLight",
-    price: 2499,
-    originalPrice: 2799,
-    image: "/placeholder.svg?height=300&width=400",
-    rating: 4.8,
-    reviewCount: 124,
-    category: "Moving Head Lights",
-    inStock: true,
-    isNew: true,
-  },
-  {
-    id: "2",
-    name: "RGB LED Par Light",
-    model: "PAR-64RGB",
-    brand: "StageMax",
-    price: 299,
-    image: "/placeholder.svg?height=300&width=400",
-    rating: 4.6,
-    reviewCount: 89,
-    category: "LED Par Lights",
-    inStock: true,
-    isBestseller: true,
-  },
-  {
-    id: "3",
-    name: "Laser Light System",
-    model: "LS-5000",
-    brand: "LaserTech",
-    price: 1299,
-    image: "/placeholder.svg?height=300&width=400",
-    rating: 4.9,
-    reviewCount: 67,
-    category: "Laser Systems",
-    inStock: true,
-  },
-  {
-    id: "4",
-    name: "LED Strip Light",
-    model: "STRIP-1000",
-    brand: "FlexLight",
-    price: 149,
-    image: "/placeholder.svg?height=300&width=400",
-    rating: 4.7,
-    reviewCount: 156,
-    category: "LED Strips",
-    inStock: true,
-  },
-  {
-    id: "5",
-    name: "Fog Machine Pro",
-    model: "FOG-3000",
-    brand: "AtmosFX",
-    price: 899,
-    image: "/placeholder.svg?height=300&width=400",
-    rating: 4.5,
-    reviewCount: 43,
-    category: "Special Effects",
-    inStock: false,
-  },
-  {
-    id: "6",
-    name: "Lighting Console",
-    model: "CONSOLE-512",
-    brand: "ControlMax",
-    price: 2199,
-    image: "/placeholder.svg?height=300&width=400",
-    rating: 4.8,
-    reviewCount: 78,
-    category: "Controllers",
-    inStock: true,
-  },
-  {
-    id: "7",
-    name: "LED Wash Light",
-    model: "WASH-200",
-    brand: "ProLight",
-    price: 399,
-    image: "/placeholder.svg?height=300&width=400",
-    rating: 4.4,
-    reviewCount: 92,
-    category: "LED Par Lights",
-    inStock: true,
-  },
-  {
-    id: "8",
-    name: "Beam Moving Head",
-    model: "BEAM-150",
-    brand: "StageMax",
-    price: 1899,
-    image: "/placeholder.svg?height=300&width=400",
-    rating: 4.7,
-    reviewCount: 56,
-    category: "Moving Head Lights",
-    inStock: true,
-  },
-]
+import { Product, CartItem, ApiResponse } from "@/types/supabase"
+import { API_URL } from "@/lib/api"
 
 export default function ProductsPage() {
-  const [products] = useState(allProducts)
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
+  const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [sortBy, setSortBy] = useState("name")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const { addToCart } = useCart()
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/products`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        })
+        const result: ApiResponse<Product[]> = await response.json()
+
+        if (!response.ok) {
+          throw new Error(result.message || "Failed to fetch products")
+        }
+
+        if (!result.success) {
+          throw new Error(result.message || "Failed to fetch products")
+        }
+
+        setProducts(result.data)
+      } catch (err: any) {
+        toast({
+          title: "Error",
+          description: err.message || "Failed to load products",
+          variant: "destructive",
+        })
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProducts()
+  }, [])
 
   // Filter and sort products
   const filteredProducts = products
     .filter((product) => {
       const matchesSearch =
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.model.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.brand.toLowerCase().includes(searchTerm.toLowerCase())
+        product.model?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.brand?.toLowerCase().includes(searchTerm.toLowerCase())
 
       return matchesSearch
     })
@@ -137,20 +71,19 @@ export default function ProductsPage() {
           return a.price - b.price
         case "price-high":
           return b.price - a.price
-        case "rating":
-          return b.rating - a.rating
         case "name":
+          return a.name.localeCompare(b.name)
         default:
           return a.name.localeCompare(b.name)
       }
     })
 
-  const handleAddToCart = (product: any) => {
+  const handleAddToCart = (product: Product) => {
     addToCart({
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.image,
+      image: product.thumbnail_image || "/placeholder.svg",
       quantity: 1,
     })
     toast({
@@ -192,7 +125,6 @@ export default function ProductsPage() {
               <SelectItem value="name" className="cursor-pointer">Name (A-Z)</SelectItem>
               <SelectItem value="price-low" className="cursor-pointer">Price (Low to High)</SelectItem>
               <SelectItem value="price-high" className="cursor-pointer">Price (High to Low)</SelectItem>
-              <SelectItem value="rating" className="cursor-pointer">Highest Rated</SelectItem>
             </SelectContent>
           </Select>
 
@@ -218,7 +150,7 @@ export default function ProductsPage() {
             <CardHeader className="p-0">
               <div className="relative overflow-hidden rounded-t-lg">
                 <Image
-                  src={product.image || "/placeholder.svg"}
+                  src={product.thumbnail_image || "/placeholder.svg"}
                   alt={product.name}
                   width={400}
                   height={300}
@@ -227,8 +159,8 @@ export default function ProductsPage() {
                   }`}
                 />
                 <div className="absolute top-4 left-4 flex gap-2">
-                  {product.isNew && <Badge className="bg-green-500 hover:bg-green-600 text-xs">New</Badge>}
-                  {product.isBestseller && (
+                  {product.is_new && <Badge className="bg-green-500 hover:bg-green-600 text-xs">New</Badge>}
+                  {product.is_best_seller && (
                     <Badge className="bg-orange-500 hover:bg-orange-600 text-xs">Bestseller</Badge>
                   )}
                 </div>
@@ -238,7 +170,7 @@ export default function ProductsPage() {
                     {product.rating}
                   </div>
                 </div>
-                {!product.inStock && (
+                {!product.in_stock && (
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                     <Badge variant="destructive" className="text-sm px-3 py-1">
                       Out of Stock
@@ -259,16 +191,16 @@ export default function ProductsPage() {
 
               <div className="flex items-center space-x-2 mb-4">
                 <div className="text-xl md:text-2xl font-bold text-primary">${product.price.toLocaleString()}</div>
-                {product.originalPrice && (
+                {product.original_price && (
                   <div className="text-sm md:text-lg text-gray-500 line-through">
-                    ${product.originalPrice.toLocaleString()}
+                    ${product.original_price.toLocaleString()}
                   </div>
                 )}
               </div>
 
               <div className="flex items-center text-xs md:text-sm text-gray-600 mb-4">
                 <Star className="h-3 w-3 md:h-4 md:w-4 text-yellow-400 mr-1" />
-                {product.rating} ({product.reviewCount} reviews)
+                {product.rating} ({product.review_count} reviews)
               </div>
 
               <div className="flex gap-2">
@@ -281,7 +213,7 @@ export default function ProductsPage() {
                 <Button
                   size="sm"
                   className="flex-1 text-xs md:text-sm"
-                  disabled={!product.inStock}
+                  disabled={!product.in_stock}
                   onClick={() => handleAddToCart(product)}
                 >
                   <ShoppingCart className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />

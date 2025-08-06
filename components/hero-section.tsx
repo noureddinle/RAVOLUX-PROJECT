@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Play, Star, Users, Award, Truck } from "lucide-react"
 import Image from "next/image"
 import { motion } from "framer-motion"
-import heroImage from "@/assets/images/pexels-jibarofoto-3689547.jpg"
+import heroImage from "@/public/images/pexels-jibarofoto-3689547.jpg"
 
 export function HeroSection() {
   return (

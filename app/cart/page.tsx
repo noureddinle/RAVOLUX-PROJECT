@@ -90,7 +90,7 @@ export default function CartPage() {
         {/* Cart Items */}
         <div className="lg:col-span-2 space-y-4">
           {items.map((item) => (
-            <Card key={item.id}>
+            <Card key={item.id} className="border border-gray-200 p-4 rounded-lg">
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4">
                   <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100">
@@ -102,11 +102,12 @@ export default function CartPage() {
                     <p className="text-gray-600">${item.price.toLocaleString()}</p>
                   </div>
 
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 ">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                      className="border border-gray-200 p-2 rounded-lg"
                     >
                       <Minus className="h-4 w-4" />
                     </Button>
@@ -115,6 +116,7 @@ export default function CartPage() {
                       variant="outline"
                       size="sm"
                       onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                      className="border border-gray-200 p-2 rounded-lg"
                     >
                       <Plus className="h-4 w-4" />
                     </Button>
@@ -126,7 +128,7 @@ export default function CartPage() {
                       variant="ghost"
                       size="sm"
                       onClick={() => removeFromCart(item.id)}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
@@ -138,9 +140,9 @@ export default function CartPage() {
         </div>
 
         {/* Order Summary */}
-        <div className="space-y-6">
+        <div className="space-y-6 ">
           {/* Promo Code */}
-          <Card>
+          <Card className="border border-gray-200 p-4 rounded-lg">
             <CardHeader>
               <CardTitle>Promo Code</CardTitle>
             </CardHeader>
@@ -150,8 +152,9 @@ export default function CartPage() {
                   placeholder="Enter promo code"
                   value={promoCode}
                   onChange={(e) => setPromoCode(e.target.value)}
+                  className="border border-gray-200 p-2 rounded-lg"
                 />
-                <Button onClick={handleApplyPromo}>Apply</Button>
+                <Button onClick={handleApplyPromo} className="border border-gray-200 p-2 rounded-lg">Apply</Button>
               </div>
               {discount > 0 && (
                 <Badge className="bg-green-100 text-green-800">Promo applied: -${discount.toFixed(2)}</Badge>
@@ -160,7 +163,7 @@ export default function CartPage() {
           </Card>
 
           {/* Payment Method */}
-          <Card>
+          <Card className="border border-gray-200 p-4 rounded-lg">
             <CardHeader>
               <CardTitle>Payment Method</CardTitle>
             </CardHeader>
@@ -185,7 +188,7 @@ export default function CartPage() {
           </Card>
 
           {/* Order Summary */}
-          <Card>
+          <Card className="border border-gray-200 p-4 rounded-lg">
             <CardHeader>
               <CardTitle>Order Summary</CardTitle>
             </CardHeader>
@@ -214,13 +217,13 @@ export default function CartPage() {
                 <span>${finalTotal.toFixed(2)}</span>
               </div>
 
-              <Button className="w-full" size="lg" onClick={handleCheckout}>
+              <Button className="w-full border border-gray-200 p-2 rounded-lg" size="lg" onClick={handleCheckout}>
                 {paymentMethod === "cod" ? "Place Order (COD)" : "Proceed to Payment"}
               </Button>
 
               <div className="text-center">
                 <Link href="/products">
-                  <Button variant="outline" className="w-full bg-transparent">
+                  <Button variant="outline" className="w-full bg-transparent border border-gray-200 p-2 rounded-lg">
                     Continue Shopping
                   </Button>
                 </Link>
