@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import { ArrowLeft } from 'lucide-react'
 
@@ -59,18 +61,18 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
               <div>
                 <h2 className="text-lg font-semibold">Customer Details</h2>
                 <p className="text-muted-foreground">
-                  <Link href={`mailto:${order.customerEmail}`} className="text-blue-600 underline">
-                    {order.customerEmail}
+                  <Link href={`mailto:${order.customer_email}`} className="text-blue-600 underline">
+                    {order.customer_email}
                   </Link>
                 </p>
-                <p className="text-muted-foreground">{order.deliveryAddress}</p>
+                <p className="text-muted-foreground">{order.delivery_address?.street}</p>
               </div>
               {/* Sub-section for Order Information */}
               <div>
                 <h2 className="text-lg font-semibold">Order Information</h2>
                 <p className="text-muted-foreground">Status: <Badge variant={getStatusBadgeVariant(order.status)}>{order.status}</Badge></p>
-                <p className="text-muted-foreground">Created: {order.created}</p>
-                <p className="text-muted-foreground">Updated: {order.updated}</p>
+                <p className="text-muted-foreground">Created: {order.created_at}</p>
+                <p className="text-muted-foreground">Updated: {order.updated_at}</p>
               </div>
             </div>
             <Separator /> {/* Visual separator */}
@@ -86,12 +88,12 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {order.items.map((item) => (
-                  <TableRow key={item.productId}>
-                    <TableCell className="font-medium">{item.productName}</TableCell>
+                {order.items?.map((item) => (
+                  <TableRow key={item.product_id}>
+                    <TableCell className="font-medium">{item.product_name}</TableCell>
                     <TableCell>{item.quantity}</TableCell>
-                    <TableCell>${item.pricePerItem.toFixed(2)}</TableCell>
-                    <TableCell className="text-right">${item.totalPrice.toFixed(2)}</TableCell>
+                    <TableCell>${item.unit_price.toFixed(2)}</TableCell>
+                    <TableCell className="text-right">${item.total_price.toFixed(2)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -106,8 +108,8 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
           </CardHeader>
           <CardContent className="grid gap-4">
             {/* Summary details */}
-            <p className="text-muted-foreground">Total Items: {order.items.length}</p>
-            <p className="text-muted-foreground">Total Price: ${order.items.reduce((acc, item) => acc + item.totalPrice, 0).toFixed(2)}</p>
+            <p className="text-muted-foreground">Total Items: {order.items?.length}</p>
+            <p className="text-muted-foreground">Total Price: ${order.items?.reduce((acc, item) => acc + item.total_price, 0).toFixed(2)}</p>
           </CardContent>
         </Card>
       </div>

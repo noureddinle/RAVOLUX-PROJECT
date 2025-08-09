@@ -13,22 +13,24 @@ import { Badge } from "@/components/ui/badge"
 import { Minus, Plus, Trash2, ShoppingBag, CreditCard, Banknote } from "lucide-react"
 import { useCart } from "@/hooks/use-cart"
 import { toast } from "@/hooks/use-toast"
+import { Newsletter } from "@/components/newsletter"
 
 export default function CartPage() {
-  const { items, total, updateQuantity, removeFromCart, clearCart } = useCart()
+  const { cart, updateCartItem, removeCartItem, loading } = useCart()
   const [paymentMethod, setPaymentMethod] = useState("cod")
   const [promoCode, setPromoCode] = useState("")
   const [discount, setDiscount] = useState(0)
 
+  const items = cart?.items || []
+  const total = items.reduce((sum, item) => sum + (item.price_at_time * item.quantity), 0)
   const shipping = total > 500 ? 0 : 50
-  const tax = Math.round(total * 0.08 * 100) / 100
-  const finalTotal = total + shipping + tax - discount
+  const finalTotal = total + shipping - discount
 
   const handleQuantityChange = (id: string, newQuantity: number) => {
     if (newQuantity < 1) {
-      removeFromCart(id)
+      removeCartItem(id)
     } else {
-      updateQuantity(id, newQuantity)
+      updateCartItem(id, newQuantity)
     }
   }
 
@@ -58,13 +60,26 @@ export default function CartPage() {
       return
     }
 
+    const totalAmount = finalTotal.toFixed(2)
+
     toast({
       title: "Order placed successfully!",
-      description: `Your order total is $${finalTotal.toFixed(2)}. ${
+      description: `Your order total is $${totalAmount}. ${
         paymentMethod === "cod" ? "You will pay on delivery." : "Payment processed."
       }`,
     })
-    clearCart()
+    // Note: clearCart functionality would need to be implemented in the new cart hook
+  }
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-16">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading cart...</p>
+        </div>
+      </div>
+    )
   }
 
   if (items.length === 0) {
@@ -85,8 +100,7 @@ export default function CartPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-gray-900 mb-8">Shopping Cart</h1>
-
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid lg:grid-cols-3 gap-8 border-b border-gray-200 pb-16">
         {/* Cart Items */}
         <div className="lg:col-span-2 space-y-4">
           {items.map((item) => (
@@ -94,12 +108,12 @@ export default function CartPage() {
               <CardContent className="p-6">
                 <div className="flex items-center space-x-4">
                   <div className="relative w-20 h-20 rounded-lg overflow-hidden bg-gray-100">
-                    <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
+                    <Image src={item.product?.thumbnail_image || "/placeholder.svg"} alt={item.product?.name || ""} fill className="object-cover" />
                   </div>
 
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900">{item.name}</h3>
-                    <p className="text-gray-600">${item.price.toLocaleString()}</p>
+                    <h3 className="font-semibold text-gray-900">{item.product?.name || ""}</h3>
+                    <p className="text-gray-600">${item.price_at_time.toLocaleString()}</p>
                   </div>
 
                   <div className="flex items-center space-x-2 ">
@@ -123,11 +137,11 @@ export default function CartPage() {
                   </div>
 
                   <div className="text-right">
-                    <p className="font-semibold text-gray-900">${(item.price * item.quantity).toLocaleString()}</p>
+                    <p className="font-semibold text-gray-900">${(item.price_at_time * item.quantity).toLocaleString()}</p>
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeCartItem(item.id)}
                       className="text-red-600 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -162,31 +176,6 @@ export default function CartPage() {
             </CardContent>
           </Card>
 
-          {/* Payment Method */}
-          <Card className="border border-gray-200 p-4 rounded-lg">
-            <CardHeader>
-              <CardTitle>Payment Method</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <RadioGroup value={paymentMethod} onValueChange={setPaymentMethod}>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="cod" id="cod" />
-                  <Label htmlFor="cod" className="flex items-center space-x-2 cursor-pointer">
-                    <Banknote className="h-5 w-5" />
-                    <span>Cash on Delivery</span>
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="card" id="card" />
-                  <Label htmlFor="card" className="flex items-center space-x-2 cursor-pointer">
-                    <CreditCard className="h-5 w-5" />
-                    <span>Credit/Debit Card</span>
-                  </Label>
-                </div>
-              </RadioGroup>
-            </CardContent>
-          </Card>
-
           {/* Order Summary */}
           <Card className="border border-gray-200 p-4 rounded-lg">
             <CardHeader>
@@ -195,15 +184,11 @@ export default function CartPage() {
             <CardContent className="space-y-4">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span>${total.toFixed(2)}</span>
+                <span>{total}</span>
               </div>
               <div className="flex justify-between">
                 <span>Shipping</span>
                 <span>{shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Tax</span>
-                <span>${tax.toFixed(2)}</span>
               </div>
               {discount > 0 && (
                 <div className="flex justify-between text-green-600">
@@ -218,7 +203,7 @@ export default function CartPage() {
               </div>
 
               <Button className="w-full border border-gray-200 p-2 rounded-lg" size="lg" onClick={handleCheckout}>
-                {paymentMethod === "cod" ? "Place Order (COD)" : "Proceed to Payment"}
+                Place Order
               </Button>
 
               <div className="text-center">
@@ -232,6 +217,7 @@ export default function CartPage() {
           </Card>
         </div>
       </div>
+      <Newsletter/>
     </div>
   )
 }

@@ -13,6 +13,8 @@ import { useCart } from "@/hooks/use-cart"
 import { toast } from "@/hooks/use-toast"
 import { Product, CartItem, ApiResponse } from "@/types/supabase"
 import { API_URL } from "@/lib/api"
+import {Footer} from "@/components/footer"
+import {Newsletter} from "@/components/newsletter"
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -22,6 +24,8 @@ export default function ProductsPage() {
   const [sortBy, setSortBy] = useState("name")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const { addToCart } = useCart()
+
+  
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -85,10 +89,10 @@ export default function ProductsPage() {
       price: product.price,
       image: product.thumbnail_image || "/placeholder.svg",
       quantity: 1,
-    })
-    toast({
-      title: "Added to cart",
-      description: `${product.name} has been added to your cart.`,
+      cart_id: "",
+      product_id: product.id,
+      price_at_time: product.price,
+      created_at: new Date().toISOString(),
     })
   }
 
@@ -164,12 +168,7 @@ export default function ProductsPage() {
                     <Badge className="bg-orange-500 hover:bg-orange-600 text-xs">Bestseller</Badge>
                   )}
                 </div>
-                <div className="absolute top-4 right-4">
-                  <div className="flex items-center bg-black/70 text-white px-2 py-1 rounded text-xs">
-                    <Star className="h-3 w-3 text-yellow-400 mr-1" />
-                    {product.rating}
-                  </div>
-                </div>
+                
                 {!product.in_stock && (
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                     <Badge variant="destructive" className="text-sm px-3 py-1">
@@ -191,18 +190,12 @@ export default function ProductsPage() {
 
               <div className="flex items-center space-x-2 mb-4">
                 <div className="text-xl md:text-2xl font-bold text-primary">${product.price.toLocaleString()}</div>
-                {product.original_price && (
+                {product.price && (
                   <div className="text-sm md:text-lg text-gray-500 line-through">
-                    ${product.original_price.toLocaleString()}
+                    ${product.price.toLocaleString()}
                   </div>
                 )}
               </div>
-
-              <div className="flex items-center text-xs md:text-sm text-gray-600 mb-4">
-                <Star className="h-3 w-3 md:h-4 md:w-4 text-yellow-400 mr-1" />
-                {product.rating} ({product.review_count} reviews)
-              </div>
-
               <div className="flex gap-2">
                 <Link href={`/products/${product.id}`} className="flex-1">
                   <Button variant="outline" size="sm" className="w-full bg-transparent text-xs md:text-sm">
@@ -232,6 +225,9 @@ export default function ProductsPage() {
           <Button onClick={() => setSearchTerm("")}>Clear Search</Button>
         </div>
       )}
+      <div className="mt-10">
+        <Newsletter />
+      </div>  
     </div>
   )
 }

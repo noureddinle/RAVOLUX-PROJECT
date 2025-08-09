@@ -4,6 +4,7 @@ import { ServicesSection } from "@/components/services-section"
 import { WhyChooseUs } from "@/components/why-choose-us"
 import { Newsletter } from "@/components/newsletter"
 
+
 export default function HomePage() {
   return (
     <main className="min-h-screen">

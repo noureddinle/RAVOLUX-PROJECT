@@ -1,4 +1,5 @@
-"use client";
+"use client"
+
 import type React from "react";
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -18,7 +19,7 @@ export function AuthModal({
 }: {
   isOpen: boolean;
   onClose: () => void;
-  onAuthSuccess: (user: UserInsert) => void;
+  onAuthSuccess: (user: UserForm, token: string) => void; 
 }) {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [showPassword, setShowPassword] = useState(false);
@@ -26,7 +27,7 @@ export function AuthModal({
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    full_name: "",
+    name: "",
     phone: "",
     confirmPassword: "",
   });
@@ -38,6 +39,8 @@ export function AuthModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+
+    console.log('Auth modal submit:', { mode, formData });
 
     // Validate form data
     if (!formData.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
@@ -70,7 +73,7 @@ export function AuthModal({
         setIsLoading(false);
         return;
       }
-      if (!formData.full_name) {
+      if (!formData.name) {
         toast({
           title: "Invalid Input",
           description: "Full name is required for registration.",
@@ -87,13 +90,15 @@ export function AuthModal({
         email: formData.email,
         password: formData.password,
         ...(mode === "register" && {
-          full_name: formData.full_name,
+          name: formData.name,
           phone: formData.phone || undefined,
-          role: 'customer',
+          role: 'user',
           email_notifications: true,
           marketing_emails: true,
         }),
       };
+
+      console.log('Making API request to:', endpoint, payload);
 
       const response = await fetch(endpoint, {
         method: 'POST',
@@ -101,17 +106,41 @@ export function AuthModal({
         body: JSON.stringify(payload),
       });
 
-      const result: ApiResponse<UserForm> = await response.json();
+      const result = await response.json();
+      console.log('API response:', result);
 
-      if (!response.ok || !result.success) {
-        throw Object.assign(new Error(), {
-          error: result.message || `${mode === "login" ? "Login" : "Registration"} failed`,
-          message: result.message || 'An error occurred',
-          statusCode: response.status,
-        });
+      if (!response.ok) {
+        throw new Error(result.message || `${mode === "login" ? "Login" : "Registration"} failed`);
       }
 
-      onAuthSuccess(payload);
+      // Handle different response structures
+      let userData: UserForm;
+      let token: string;
+
+      if (result.user) {
+        // Backend returns { user: { ... } }
+        userData = result.user;
+        token = result.user.accessToken || '';
+      } else if (result.data) {
+        // Backend returns { data: { ... }, success: true }
+        userData = result.data;
+        token = result.data.accessToken || '';
+      } else {
+        // Fallback - assume the entire response is user data
+        userData = result;
+        token = result.accessToken || '';
+      }
+
+      // Ensure we have the required fields
+      if (!userData.id || !userData.email) {
+        throw new Error('Invalid user data received from server');
+      }
+
+      console.log('Calling onAuthSuccess with:', { userData, token });
+
+      // Pass both user data and token to parent
+      onAuthSuccess(userData, token);
+      
       toast({
         title: mode === "login" ? "Welcome back!" : "Account created!",
         description:
@@ -122,12 +151,17 @@ export function AuthModal({
       setFormData({
         email: "",
         password: "",
-        full_name: "",
+        name: "",
         phone: "",
         confirmPassword: "",
       });
-      onClose();
+      
+      // Close modal with a small delay to ensure state updates
+      setTimeout(() => {
+        onClose();
+      }, 100);
     } catch (err: any) {
+      console.error('Auth error:', err);
       toast({
         title: "Error",
         description: err.message || `Failed to ${mode === "login" ? "log in" : "register"}. Please try again.`,
@@ -143,7 +177,7 @@ export function AuthModal({
     setFormData({
       email: "",
       password: "",
-      full_name: "",
+      name: "",
       phone: "",
       confirmPassword: "",
     });
@@ -161,16 +195,15 @@ export function AuthModal({
           {mode === "register" && (
             <>
               <div className="space-y-2">
-                <Label htmlFor="full_name">Full Name</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                   <Input
-                    id="full_name"
+                    id="name"
                     type="text"
                     placeholder="Enter your full name"
-                    value={formData.full_name}
-                    onChange={(e) => handleInputChange("full_name", e.target.value)}
-                    className="pl-10"
+                    value={formData.name}
+                    onChange={(e) => handleInputChange("name", e.target.value)}
+                    className="pl-10 h-12 border border-gray-300 text-gray-400"
                     required
                   />
                 </div>
@@ -178,7 +211,6 @@ export function AuthModal({
             </>
           )}
           <div className="space-y-2">
-            <Label htmlFor="email">Email Address</Label>
             <div className="relative">
               <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
@@ -187,13 +219,12 @@ export function AuthModal({
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
-                className="pl-10"
+                className="pl-10 h-12 border border-gray-300 text-gray-400"
                 required
               />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
               <Input
@@ -202,7 +233,7 @@ export function AuthModal({
                 placeholder="Enter your password"
                 value={formData.password}
                 onChange={(e) => handleInputChange("password", e.target.value)}
-                className="pl-10 pr-10"
+                className="pl-10 pr-10 h-12 border border-gray-300 text-gray-400"
                 required
               />
               <button
@@ -216,7 +247,6 @@ export function AuthModal({
           </div>
           {mode === "register" && (
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
@@ -225,13 +255,13 @@ export function AuthModal({
                   placeholder="Confirm your password"
                   value={formData.confirmPassword}
                   onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                  className="pl-10"
+                  className="pl-10 pr-10 h-12 border border-gray-300 text-gray-400"
                   required
                 />
               </div>
             </div>
           )}
-          <Button type="submit" className="w-full bg-black text-white hover:bg-white hover:text-black" disabled={isLoading}>
+          <Button type="submit" className="w-full bg-black text-white hover:bg-white hover:text-black h-12" disabled={isLoading}>
             {isLoading ? "Please wait..." : mode === "login" ? "Sign In" : "Create Account"}
           </Button>
         </form>
@@ -255,3 +285,4 @@ export function AuthModal({
     </Dialog>
   );
 }
+

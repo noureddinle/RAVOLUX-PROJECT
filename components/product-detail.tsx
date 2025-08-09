@@ -138,10 +138,6 @@ export function ProductDetail() {
     );
   }
 
-  const discount = product.original_price
-    ? Math.round(((product.original_price - product.price) / product.original_price) * 100)
-    : 0;
-
   return (
     <div className="container mx-auto px-8 py-8">
       <div className="grid lg:grid-cols-2 gap-12">
@@ -149,7 +145,7 @@ export function ProductDetail() {
         <div className="space-y-4">
           <div className="aspect-square rounded-2xl overflow-hidden bg-gray-50">
             <Image
-              src={product.thumbnail_image || "/placeholder.svg"}
+              src={product.images[selectedImage] || "/placeholder.svg"}
               alt={product.name}
               width={600}
               height={600}
@@ -191,14 +187,6 @@ export function ProductDetail() {
             {product.model && <p className="text-lg text-gray-600 mb-4">{product.model}</p>}
             <div className="flex items-center space-x-4 mb-6">
               <div className="text-3xl font-bold text-primary">${product.price.toLocaleString()}</div>
-              {product.original_price && product.original_price > product.price && (
-                <>
-                  <div className="text-xl text-gray-500 line-through">
-                    ${product.original_price.toLocaleString()}
-                  </div>
-                  <Badge className="bg-red-500 hover:bg-red-600">{discount}% OFF</Badge>
-                </>
-              )}
             </div>
             <div className="flex items-center space-x-2 mb-6">
               {product.in_stock ? (

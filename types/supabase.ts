@@ -11,7 +11,7 @@ export interface Address {
   company?: string;
 }
 
-export type UserRole = 'customer' | 'admin';
+export type UserRole = 'user' | 'admin';
 export type OrderStatus = 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
 export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
 
@@ -20,9 +20,9 @@ export interface UserForm {
   id: UUID;
   email: string;
   password: string;
-  full_name: string;
+  name: string;
   phone?: string;
-  role: UserRole;
+  role: 'user' | 'admin';
   
   // Default addresses
   billing_address?: Address;
@@ -38,14 +38,15 @@ export interface UserForm {
   // Relations
   orders?: Order[];
   carts?: Cart[];
+  accessToken?: string;
 }
 
 export interface UserInsert {
   email: string;
   password: string;
-  full_name?: string;
+  name?: string;
   phone?: string;
-  role?: UserRole;
+  role?: 'user' | 'admin';
   billing_address?: Address;
   shipping_address?: Address;
   email_notifications?: boolean;
@@ -53,7 +54,7 @@ export interface UserInsert {
 }
 
 export interface UserUpdate {
-  full_name?: string;
+  name?: string;
   phone?: string;
   billing_address?: Address;
   shipping_address?: Address;
@@ -85,10 +86,8 @@ export interface Product {
   model?: string;
   features?: string[];
   is_featured?: boolean;
-  review_count?: number; // Matches review_count in database
-  original_price?: number; // Matches original_price in database
-  in_stock?: boolean; // Matches in_stock in database
-  stock_count?: number; // Matches stock_count in database
+  in_stock?: boolean;
+  stock_count?: number;
 }
 
 export interface ProductInsert {
@@ -179,6 +178,7 @@ export interface Order {
   billing_address: Address;
   shipping_address?: Address;
   shipping_cost: number;
+  delivery_address: Address;
   
   // Payment
   payment_method?: string;
@@ -206,6 +206,7 @@ export interface OrderInsert {
   billing_address: Address;
   shipping_address?: Address;
   shipping_cost?: number;
+  delivery_address: Address;
   payment_method?: string;
   payment_status?: PaymentStatus;
 }
@@ -251,10 +252,16 @@ export interface NewsletterSubscription {
   is_active: boolean;
   subscribed_at: Timestamp;
   unsubscribed_at?: Timestamp;
+  created_at: Timestamp;
+  updated_at: Timestamp;
 }
 
 export interface NewsletterSubscriptionInsert {
   email: string;
+  is_active?: boolean;
+}
+
+export interface NewsletterSubscriptionUpdate {
   is_active?: boolean;
 }
 

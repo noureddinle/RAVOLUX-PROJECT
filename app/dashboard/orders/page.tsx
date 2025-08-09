@@ -25,11 +25,11 @@ export default async function OrdersPage() {
 
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
-      case 'Completed':
+      case 'delivered':
         return 'default';
-      case 'Pending':
+      case 'pending':
         return 'secondary';
-      case 'Cancelled':
+      case 'cancelled':
         return 'destructive';
       default:
         return 'outline';
@@ -63,17 +63,17 @@ export default async function OrdersPage() {
                 <TableRow key={order.id}>
                   <TableCell className="font-medium">{order.id}</TableCell>
                   <TableCell>
-                    <Link href={`mailto:${order.customerEmail}`} className="text-blue-600 underline">
-                      {order.customerEmail}
+                    <Link href={`mailto:${order.customer_email}`} className="text-blue-600 underline">
+                      {order.customer_email}
                     </Link>
                   </TableCell>
-                  <TableCell>{order.deliveryAddress}</TableCell>
+                  <TableCell>{order.delivery_address.city}</TableCell>
                   <TableCell>
                     <Badge variant={getStatusBadgeVariant(order.status)}>
                       {order.status}
                     </Badge>
                   </TableCell>
-                  <TableCell>{order.updated}</TableCell>
+                  <TableCell>{new Date(order.updated_at).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

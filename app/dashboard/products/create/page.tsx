@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { ChevronDown, ImageIcon, Sparkles, Wand2 } from 'lucide-react'
-
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -14,7 +13,7 @@ import { Separator } from "@/components/ui/separator"
 export default function CreateProductPage() {
   const [category, setCategory] = useState("")
   const [description, setDescription] = useState("")
-  const [picture, setPicture] = useState(null)
+  const [picture, setPicture] = useState<File | null>(null)
   const [price, setPrice] = useState("")
 
   const handleGenerateDescription = () => {
@@ -29,11 +28,13 @@ export default function CreateProductPage() {
 
   const handleGeneratePicture = () => {
     // Placeholder for AI picture generation logic
-    setPicture("Generated picture")
+    setPicture(null)
   }
 
-  const handleFileChange = (event) => {
-    setPicture(event.target.files[0])
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setPicture(event.target.files[0])
+    }
   }
 
   return (
@@ -85,15 +86,15 @@ export default function CreateProductPage() {
                 <Sparkles className="h-4 w-4" /> Generate with AI
               </Button>
             </div>
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center flex flex-col items-center justify-center h-48">
+            <div className="border-2 border-dashed border-border rounded-lg p-6 text-center flex flex-col items-center justify-center h-48">
               {picture ? (
-                <img src={URL.createObjectURL(picture) || "/placeholder.svg"} alt="Uploaded" className="h-32 w-32 object-cover" />
+                <img src={URL.createObjectURL(picture)} alt="Uploaded" className="h-32 w-32 object-cover" />
               ) : (
                 <>
-                  <ImageIcon className="h-12 w-12 text-gray-400" />
-                  <p className="text-gray-500 mt-2">Drop your file here, or click to browse</p>
-                  <p className="text-gray-400 text-sm mt-1">Max size: 5 MB</p>
-                  <p className="text-gray-400 text-sm">Supports: image/png, image/jpeg, image/jpg</p>
+                  <ImageIcon className="h-12 w-12 text-muted-foreground" />
+                  <p className="text-muted-foreground mt-2">Drop your file here, or click to browse</p>
+                  <p className="text-muted-foreground text-sm mt-1">Max size: 5 MB</p>
+                  <p className="text-muted-foreground text-sm">Supports: image/png, image/jpeg, image/jpg</p>
                 </>
               )}
               <input type="file" id="picture" className="hidden" onChange={handleFileChange} />

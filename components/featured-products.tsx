@@ -15,8 +15,10 @@ export function FeaturedProducts() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     const fetchFeaturedProducts = async () => {
       try {
         setLoading(true);
@@ -81,6 +83,31 @@ export function FeaturedProducts() {
     }
   };
 
+  // Don't render anything until mounted to prevent hydration mismatch
+  if (!mounted) {
+    return (
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <Badge variant="outline" className="mb-4">
+              Featured Products
+            </Badge>
+            <h2 className="text-4xl lg:text-5xl font-bold mb-6">Professional Lighting Equipment</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Discover our carefully curated selection of premium stage lighting equipment from the world's leading
+              manufacturers.
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-96 bg-gray-200 animate-pulse rounded-lg" />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-20 bg-background">
       <div className="container mx-auto px-4">
@@ -140,37 +167,14 @@ export function FeaturedProducts() {
                           <Badge className="bg-orange-500 hover:bg-orange-600">Bestseller</Badge>
                         )}
                       </div>
-                      {product.rating != null && (
-                        <div className="absolute top-4 right-4">
-                          <div className="flex items-center bg-black/70 text-white px-2 py-1 rounded text-sm">
-                            <Star className="h-4 w-4 text-yellow-400 mr-1" />
-                            {product.rating.toFixed(1)}
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </CardHeader>
                   <CardContent className="p-6">
-                    {product.brand && (
-                      <div className="mb-2">
-                        <Badge variant="secondary" className="text-xs">
-                          {product.brand}
-                        </Badge>
-                      </div>
-                    )}
-                    <h3 className="text-xl font-bold mb-2">{product.name}</h3>
-                    {product.model && <p className="text-muted-foreground mb-4">{product.model}</p>}
-                    {product.features && product.features.length > 0 && (
-                      <div className="space-y-2 mb-4">
-                        {product.features.map((feature, idx) => (
-                          <div key={idx} className="flex items-center text-sm text-muted-foreground">
-                            <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2" />
-                            {feature}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                    <div className="text-2xl font-bold text-primary mb-4">
+                    <div className="mb-2 w-full">
+                      <h3 className="text-xl font-bold">{product.name}</h3>
+                    </div>
+                    {product.model && <p className="text-muted-foreground mb-2">{product.model}</p>}
+                    <div className="text-2xl font-bold text-primary mb-2">
                       {product.price > 0 ? `$${product.price.toLocaleString()}` : "Request Quote"}
                     </div>
                   </CardContent>

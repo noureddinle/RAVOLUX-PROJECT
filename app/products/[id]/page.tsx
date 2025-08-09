@@ -13,8 +13,7 @@ export default function ProductPage() {
       <ProductDetail />
       
       {/* RelatedProducts needs the current product ID */}
-      <RelatedProducts  
-      />
+      <RelatedProducts />
     </div>
   )
 }

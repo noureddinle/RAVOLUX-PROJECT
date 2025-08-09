@@ -13,9 +13,9 @@ router.post('/register', async (req: Request, res: ExpressResponse) => {
     const {
       email,
       password,
-      full_name,
+      name,
       phone,
-      role = 'customer',
+      role = 'user',
       email_notifications = true,
       marketing_emails = false
     }: UserInsert & { password: string } = req.body;
@@ -48,7 +48,7 @@ router.post('/register', async (req: Request, res: ExpressResponse) => {
     const UserInsert: UserInsert & { password: string } = {
       email,
       password: hashedPassword, 
-      full_name,
+      name,
       phone,
       role,
       email_notifications,
@@ -58,7 +58,7 @@ router.post('/register', async (req: Request, res: ExpressResponse) => {
     const { data: user, error: userError } = await supabase
       .from('users')
       .insert(UserInsert)
-      .select('id, email, role, full_name')
+      .select('id, email, role, name')
       .single();
 
     if (userError) return handleError(res, userError, 'Failed to register user');
@@ -71,7 +71,7 @@ router.post('/register', async (req: Request, res: ExpressResponse) => {
         id: user.id,
         email: user.email,
         role: user.role,
-        full_name: user.full_name,
+        name: user.name,
         accessToken: token
       }
     });
@@ -93,7 +93,7 @@ router.post('/login', async (req: Request, res: ExpressResponse) => {
     // Fetch user profile by email
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, email, password, role, full_name')
+      .select('id, email, password, role, name')
       .eq('email', email)
       .single();
 
@@ -116,7 +116,7 @@ router.post('/login', async (req: Request, res: ExpressResponse) => {
         id: user.id,
         email: user.email,
         role: user.role,
-        full_name: user.full_name,
+        name: user.name,
         accessToken: token
       }
     });

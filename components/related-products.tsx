@@ -66,12 +66,7 @@ export function RelatedProducts() {
                     height={300}
                     className="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 right-4">
-                    <div className="flex items-center bg-black/70 text-white px-2 py-1 rounded text-sm">
-                      <Star className="h-4 w-4 text-yellow-400 mr-1" />
-                      {product.rating}
-                    </div>
-                  </div>
+                  
                 </div>
               </CardHeader>
 
@@ -85,12 +80,12 @@ export function RelatedProducts() {
 
                 <div className="flex gap-2">
                   <Link href={`/products/${product.id}`} className="flex-1">
-                    <Button variant="outline" size="sm" className="w-full bg-transparent">
+                    <Button variant="outline" size="sm" className="w-full bg-transparent hover:bg-blue-500 hover:text-white">
                       View Details
                     </Button>
                   </Link>
-                  <Button size="sm" className="flex-1">
-                    <ShoppingCart className="h-4 w-4 mr-2" />
+                  <Button size="sm" className="flex-1 hover:bg-blue-500 hover:text-white">
+                    <ShoppingCart className="h-4 w-4 mr-2 " />
                     Add to Cart
                   </Button>
                 </div>

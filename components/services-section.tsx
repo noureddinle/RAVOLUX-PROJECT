@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -62,6 +63,80 @@ const additionalServices = [
 ]
 
 export function ServicesSection() {
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // Don't render animations until mounted to prevent hydration mismatch
+  if (!mounted) {
+    return (
+      <section className="py-20 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <Badge variant="outline" className="mb-4">
+              Our Services
+            </Badge>
+            <h2 className="text-4xl lg:text-5xl font-bold mb-6">Complete Lighting Solutions</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              From import and distribution to technical support and custom solutions, we provide comprehensive services to
+              meet all your lighting needs.
+            </p>
+          </div>
+
+          {/* Main Services */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+            {services.map((service, index) => (
+              <Card key={service.title} className="h-full hover:shadow-xl transition-all duration-300 border-0 shadow-lg">
+                <CardHeader className="text-center pb-4">
+                  <div
+                    className={`w-16 h-16 ${service.color} rounded-2xl flex items-center justify-center mx-auto mb-4`}
+                  >
+                    <service.icon className="h-8 w-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold">{service.title}</h3>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <p className="text-muted-foreground mb-6">{service.description}</p>
+                  <div className="space-y-2">
+                    {service.features.map((feature, idx) => (
+                      <div key={idx} className="flex items-center text-sm">
+                        <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2" />
+                        {feature}
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Additional Services */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {additionalServices.map((service, index) => (
+              <div key={service.title} className="flex items-center space-x-4 p-6 bg-background rounded-lg shadow-sm">
+                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <service.icon className="h-6 w-6 text-primary" />
+                </div>
+                <div>
+                  <h4 className="font-semibold">{service.title}</h4>
+                  <p className="text-sm text-muted-foreground">{service.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Button size="lg" className="px-8">
+              Learn More About Our Services
+            </Button>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section className="py-20 bg-muted/30">
       <div className="container mx-auto px-4">

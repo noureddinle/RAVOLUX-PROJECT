@@ -1,6 +1,6 @@
 import { getDashboardStatistics } from "@/lib/data"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { DollarSign, ShoppingCart, TrendingUp, Package } from 'lucide-react'
+import { DollarSign, ShoppingCart, TrendingUp } from 'lucide-react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
 export default async function StatisticsPage() {
@@ -11,57 +11,45 @@ export default async function StatisticsPage() {
       <h1 className="text-2xl font-bold">Dashboard Statistics</h1>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+        <Card className="p-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${stats.totalRevenue.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">
-              +20.1% from last month
-            </p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="p-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalOrders}</div>
-            <p className="text-xs text-muted-foreground">
-              +15% from last month
-            </p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="p-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Completed Orders</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{stats.totalCompletedOrders}</div>
-            <p className="text-xs text-muted-foreground">
-              +10% from last month
-            </p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="p-0">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Average Order Value</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">${stats.averageOrderValue.toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground">
-              +5% from last month
-            </p>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
+      <Card className="p-0">
         <CardHeader>
           <CardTitle>Top Selling Products</CardTitle>
         </CardHeader>

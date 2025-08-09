@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { getNewsletterSubscribers } from "@/lib/data"
 
 export default async function NewsletterPage() {
   const subscribers = await getNewsletterSubscribers()
@@ -22,7 +23,7 @@ export default async function NewsletterPage() {
                 <TableRow key={subscriber.id}>
                   <TableCell className="font-medium">{subscriber.id}</TableCell>
                   <TableCell>{subscriber.email}</TableCell>
-                  <TableCell>{subscriber.subscribedAt}</TableCell>
+                  <TableCell>{new Date(subscriber.created_at).toLocaleDateString()}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

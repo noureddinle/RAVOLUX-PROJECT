@@ -18,8 +18,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { getProducts } from "@/lib/data"
 import { Badge } from "@/components/ui/badge"
+import { getProducts } from "@/lib/data"
 
 export default async function ProductsPage() {
   const products = await getProducts()
@@ -41,9 +41,9 @@ export default async function ProductsPage() {
           </Button>
         </div>
       </div>
-      <Card>
+      <Card className="p-0">
         <CardContent className="p-0">
-          <Table>
+          <Table> 
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[50px]">ID</TableHead>
@@ -61,7 +61,7 @@ export default async function ProductsPage() {
                   <TableCell className="font-medium">{product.id}</TableCell>
                   <TableCell className="hidden md:table-cell">
                     <Image
-                      src={product.images[0] || "/placeholder.svg"}
+                      src={product.thumbnail_image || "/placeholder.svg"}
                       width={48}
                       height={48}
                       alt={product.name}
@@ -74,8 +74,8 @@ export default async function ProductsPage() {
                   </TableCell>
                   <TableCell>${product.price.toFixed(2)}</TableCell>
                   <TableCell>
-                    <Badge variant={product.inStock ? "default" : "destructive"}>
-                      {product.inStock ? `${product.stockCount} In Stock` : "Out of Stock"}
+                    <Badge variant={product.stock_quantity > 0 ? "default" : "destructive"}>
+                      {product.stock_quantity > 0 ? `${product.stock_quantity} In Stock` : "Out of Stock"}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
@@ -87,11 +87,11 @@ export default async function ProductsPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem asChild>
+                        <DropdownMenuItem className="cursor-pointer" asChild>
                           <Link href={`/dashboard/products/${product.id}`}>Show</Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer">Edit</DropdownMenuItem>
+                        <DropdownMenuItem className="text-red-600 cursor-pointer">Delete</DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
