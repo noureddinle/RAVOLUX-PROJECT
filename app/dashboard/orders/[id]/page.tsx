@@ -1,4 +1,3 @@
-"use client"
 
 import Link from "next/link"
 import { ArrowLeft } from 'lucide-react'
@@ -13,13 +12,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { getOrder } from "@/lib/data"
+import { getOrder, getCustomers, updateOrderStatus, deleteOrder } from "@/lib/data"
 import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 
 export default async function OrderDetailsPage({ params }: { params: { id: string } }) {
   const order = await getOrder(params.id)
+  const customers = await getCustomers()
 
   if (!order) {
     notFound()
@@ -28,13 +28,13 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
       case 'Completed':
-        return 'default';
+        return 'bg-green-500 text-white font-semibold';
       case 'Pending':
-        return 'secondary';
+        return 'bg-yellow-500 text-white font-semibold';
       case 'Cancelled':
-        return 'destructive';
+        return 'bg-red-500 text-white font-semibold';
       default:
-        return 'outline';
+        return 'default';
     }
   };
 
@@ -42,7 +42,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
     <div className="flex flex-col gap-4">
       {/* Page header and back button */}
       <div className="flex items-center gap-4">
-        <Button variant="outline" size="icon" asChild>
+        <Button className="border border-gray-200 dark:border-gray-800" variant="outline" size="icon" asChild>
           <Link href="/dashboard/orders">
             <ArrowLeft className="h-4 w-4" />
             <span className="sr-only">Back to Orders</span>
@@ -52,25 +52,27 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
       </div>
 
       {/* This grid holds two main information cards */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 ">
         {/* Card for Customer Details and Order Information */}
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 border border-gray-200 dark:border-gray-800">
           <CardContent className="p-6 grid gap-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Sub-section for Customer Details */}
               <div>
                 <h2 className="text-lg font-semibold">Customer Details</h2>
+                <p className="text-muted-foreground">{customers.find((customer) => customer.id === order.user_id)?.name}</p>
                 <p className="text-muted-foreground">
-                  <Link href={`mailto:${order.customer_email}`} className="text-blue-600 underline">
-                    {order.customer_email}
+                  <Link href={`mailto:${customers.find((customer) => customer.id === order.user_id)?.email}`} className="text- underline">
+                    {customers.find((customer) => customer.id === order.user_id)?.email}
                   </Link>
                 </p>
+                <p className="text-muted-foreground">{customers.find((customer) => customer.id === order.user_id)?.phone}</p>
                 <p className="text-muted-foreground">{order.delivery_address?.street}</p>
               </div>
               {/* Sub-section for Order Information */}
               <div>
                 <h2 className="text-lg font-semibold">Order Information</h2>
-                <p className="text-muted-foreground">Status: <Badge variant={getStatusBadgeVariant(order.status)}>{order.status}</Badge></p>
+                <p className="text-muted-foreground">Status: <Badge className={getStatusBadgeVariant(order.status)}>{order.status}</Badge></p>
                 <p className="text-muted-foreground">Created: {order.created_at}</p>
                 <p className="text-muted-foreground">Updated: {order.updated_at}</p>
               </div>
@@ -80,7 +82,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
             {/* Table for Products in Order */}
             <Table>
               <TableHeader>
-                <TableRow>
+                <TableRow className="border-b border-gray-200 dark:border-gray-800">
                   <TableHead>Product</TableHead>
                   <TableHead>Quantity</TableHead>
                   <TableHead>Price (per Item)</TableHead>
@@ -89,7 +91,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
               </TableHeader>
               <TableBody>
                 {order.items?.map((item) => (
-                  <TableRow key={item.product_id}>
+                  <TableRow key={item.product_id} className="border-b border-gray-200 dark:border-gray-800">
                     <TableCell className="font-medium">{item.product_name}</TableCell>
                     <TableCell>{item.quantity}</TableCell>
                     <TableCell>${item.unit_price.toFixed(2)}</TableCell>
@@ -102,7 +104,7 @@ export default async function OrderDetailsPage({ params }: { params: { id: strin
         </Card>
 
         {/* Card for Order Summary */}
-        <Card>
+        <Card className="border border-gray-200 dark:border-gray-800">
           <CardHeader>
             <CardTitle>Order Summary</CardTitle>
           </CardHeader>

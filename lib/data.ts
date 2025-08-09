@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { UserForm, Order, Product, NewsletterSubscription } from '@/types/supabase';
+import { UserForm, Order, Product, OrderItem, OrderItemInsert, OrderItemUpdate, OrderItemDelete, NewsletterSubscription } from '@/types/supabase';
 
 // Dashboard Statistics
 export async function getDashboardStatistics() {
@@ -225,3 +225,38 @@ export async function updateOrderStatus(id: string, status: string) {
     throw error;
   }
 }
+
+//Delete order
+export async function deleteOrder(id: string) {
+  try {
+    const { error } = await supabase
+      .from('orders')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    throw error;
+  }
+}
+
+//Update order item
+export async function updateOrderItem(id: string, orderItemData: any) {
+  try {
+    const { data, error } = await supabase
+      .from('order_items')
+      .update(orderItemData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Error updating order item:', error);
+    throw error;
+  }
+}
+

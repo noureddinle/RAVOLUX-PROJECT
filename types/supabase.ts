@@ -1,3 +1,4 @@
+// src/types/supabase.ts
 export type UUID = string;
 export type Timestamp = string;
 
@@ -6,14 +7,14 @@ export interface Address {
   street: string;
   city: string;
   state: string;
-  postal_code: string;
+  postal_code: string; // Changed from zip to match database JSONB
   country: string;
   company?: string;
 }
 
-export type UserRole = 'user' | 'admin';
-export type OrderStatus = 'pending' | 'confirmed' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded';
+export type UserRole = "user" | "admin";
+export type OrderStatus = "pending" | "confirmed" | "shipped" | "delivered" | "cancelled"; // Aligned with database
+export type PaymentStatus = "pending" | "completed" | "failed" | "refunded"; // Aligned with database
 
 // Users Table
 export interface UserForm {
@@ -22,20 +23,13 @@ export interface UserForm {
   password: string;
   name: string;
   phone?: string;
-  role: 'user' | 'admin';
-  
-  // Default addresses
+  role: UserRole;
   billing_address?: Address;
   shipping_address?: Address;
-  
-  // Preferences
   email_notifications: boolean;
   marketing_emails: boolean;
-  
   created_at: Timestamp;
   updated_at: Timestamp;
-  
-  // Relations
   orders?: Order[];
   carts?: Cart[];
   accessToken?: string;
@@ -46,7 +40,7 @@ export interface UserInsert {
   password: string;
   name?: string;
   phone?: string;
-  role?: 'user' | 'admin';
+  role?: UserRole;
   billing_address?: Address;
   shipping_address?: Address;
   email_notifications?: boolean;
@@ -122,8 +116,6 @@ export interface Cart {
   session_id?: string;
   created_at: Timestamp;
   updated_at: Timestamp;
-  
-  // Relations
   items?: CartItem[];
   user?: UserForm;
 }
@@ -139,12 +131,10 @@ export interface CartItem {
   product_id: UUID;
   quantity: number;
   price_at_time: number;
-  name: string; 
-  price: number;  
-  image: string; 
+  name: string;
+  price: number;
+  image: string;
   created_at: Timestamp;
-
-  // Relations
   cart?: Cart;
   product?: Product;
 }
@@ -154,7 +144,6 @@ export interface CartItemInsert {
   product_id: UUID;
   quantity: number;
   price_at_time: number;
-  created_at: Timestamp;
 }
 
 export interface CartItemUpdate {
@@ -166,38 +155,31 @@ export interface Order {
   id: UUID;
   order_number: string;
   user_id?: UUID;
+  session_id?: string;
   status: OrderStatus;
   total_amount: number;
-  
-  // Customer Info
   customer_email: string;
   customer_name: string;
   customer_phone?: string;
-  
-  // Addresses
   billing_address: Address;
   shipping_address?: Address;
   shipping_cost: number;
   delivery_address: Address;
-  
-  // Payment
-  payment_method?: string;
+  payment_method: string; // Allow extensibility
   payment_status: PaymentStatus;
-  
-  // Timestamps
+  discount?: number;
   created_at: Timestamp;
   updated_at: Timestamp;
   shipped_at?: Timestamp;
   delivered_at?: Timestamp;
-  
-  // Relations
   items?: OrderItem[];
   user?: UserForm;
 }
 
 export interface OrderInsert {
-  order_number: string;
+  order_number?: string; // Optional, generated server-side
   user_id?: UUID;
+  session_id?: string;
   status?: OrderStatus;
   total_amount: number;
   customer_email: string;
@@ -207,8 +189,9 @@ export interface OrderInsert {
   shipping_address?: Address;
   shipping_cost?: number;
   delivery_address: Address;
-  payment_method?: string;
+  payment_method: string;
   payment_status?: PaymentStatus;
+  discount?: number;
 }
 
 export interface OrderUpdate {
@@ -217,25 +200,11 @@ export interface OrderUpdate {
   payment_status?: PaymentStatus;
   shipped_at?: Timestamp;
   delivered_at?: Timestamp;
+  discount?: number;
 }
 
 export interface OrderItem {
   id: UUID;
-  order_id: UUID;
-  product_id?: UUID;
-  product_name: string; // Stored at time of order
-  product_sku: string;
-  quantity: number;
-  unit_price: number;
-  total_price: number;
-  created_at: Timestamp;
-  
-  // Relations
-  order?: Order;
-  product?: Product;
-}
-
-export interface OrderItemInsert {
   order_id: UUID;
   product_id?: UUID;
   product_name: string;
@@ -243,6 +212,27 @@ export interface OrderItemInsert {
   quantity: number;
   unit_price: number;
   total_price: number;
+  created_at: Timestamp;
+  order?: Order;
+  product?: Product;
+}
+
+export interface OrderItemInsert {
+  order_id?: UUID;
+  product_id?: UUID;
+  product_name: string;
+  product_sku: string;
+  quantity: number;
+  unit_price: number;
+  total_price: number;
+}
+
+export interface OrderItemUpdate {
+  quantity?: number;
+}
+
+export interface OrderItemDelete {
+  id: UUID;
 }
 
 // Newsletter Subscriptions
@@ -324,7 +314,7 @@ export interface Database {
       newsletter_subscriptions: {
         Row: NewsletterSubscription;
         Insert: NewsletterSubscriptionInsert;
-        Update: never;
+        Update: NewsletterSubscriptionUpdate;
       };
       contact_messages: {
         Row: ContactMessage;
@@ -377,8 +367,8 @@ export interface ProductFilters {
 }
 
 export interface ProductSortOptions {
-  field: 'name' | 'price' | 'created_at' | 'stock_quantity';
-  direction: 'asc' | 'desc';
+  field: "name" | "price" | "created_at" | "stock_quantity";
+  direction: "asc" | "desc";
 }
 
 // Pagination

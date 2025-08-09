@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Filter, MoreHorizontal } from 'lucide-react'
+import { MoreHorizontal } from 'lucide-react'
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/table"
 import { getOrders } from "@/lib/data"
 import { Badge } from "@/components/ui/badge"
+import { Order } from "@/types/supabase"
+import OrderActions from "@/components/orderActions"
 
 export default async function OrdersPage() {
   const orders = await getOrders()
@@ -26,70 +28,52 @@ export default async function OrdersPage() {
   const getStatusBadgeVariant = (status: string) => {
     switch (status) {
       case 'delivered':
-        return 'default';
+        return 'bg-green-500 text-white font-semibold';
       case 'pending':
-        return 'secondary';
+        return 'bg-yellow-500 text-white font-semibold';
       case 'cancelled':
-        return 'destructive';
+        return 'bg-red-500 text-white font-semibold';
       default:
-        return 'outline';
+        return 'bg-gray-200 text-gray-700 font-semibold';
     }
   };
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Orders <span className="text-muted-foreground text-base font-normal">({orders.length})</span></h1>
-        <Button variant="outline" className="flex items-center gap-2">
-          <Filter className="h-4 w-4" />
-          Filter
-        </Button>
+        <h1 className="text-2xl font-bold">Orders <span className="text-base font-normal text-gray-500">({orders.length})</span></h1>
       </div>
-      <Card>
+      <Card className="border-gray-200 dark:border-gray-700">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead className="w-[50px]">ID</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Delivery Address</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Updated</TableHead>
+              <TableRow className="border-none">
+                <TableHead className="w-[50px] border-none">ID</TableHead>
+                <TableHead className="border-none">Customer</TableHead>
+                <TableHead className="border-none">Delivery Address</TableHead>
+                <TableHead className="border-none">Status</TableHead>
+                <TableHead className="border-none">Updated</TableHead>
                 <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {orders.map((order) => (
-                <TableRow key={order.id}>
+                <TableRow key={order.id} className="border-b border-gray-200">
                   <TableCell className="font-medium">{order.id}</TableCell>
                   <TableCell>
-                    <Link href={`mailto:${order.customer_email}`} className="text-blue-600 underline">
+                    <Link href={`mailto:${order.customer_email}`} className="text-gray-600 underline">
                       {order.customer_email}
                     </Link>
                   </TableCell>
                   <TableCell>{order.delivery_address.city}</TableCell>
                   <TableCell>
-                    <Badge variant={getStatusBadgeVariant(order.status)}>
+                    <Badge className={getStatusBadgeVariant(order.status)}>
                       {order.status}
                     </Badge>
                   </TableCell>
                   <TableCell>{new Date(order.updated_at).toLocaleDateString()}</TableCell>
                   <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Actions</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem asChild>
-                          <Link href={`/dashboard/orders/${order.id}`}>Show</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>Edit</DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                      <OrderActions order={order} />
                   </TableCell>
                 </TableRow>
               ))}

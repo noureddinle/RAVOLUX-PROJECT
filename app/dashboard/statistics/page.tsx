@@ -11,7 +11,7 @@ export default async function StatisticsPage() {
       <h1 className="text-2xl font-bold">Dashboard Statistics</h1>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="p-0">
+        <Card className="p-0 border-gray-200 dark:border-gray-700">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -20,7 +20,7 @@ export default async function StatisticsPage() {
             <div className="text-2xl font-bold">${stats.totalRevenue.toFixed(2)}</div>
           </CardContent>
         </Card>
-        <Card className="p-0">
+        <Card className="p-0 border-gray-200 dark:border-gray-700">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
@@ -29,7 +29,7 @@ export default async function StatisticsPage() {
             <div className="text-2xl font-bold">{stats.totalOrders}</div>
           </CardContent>
         </Card>
-        <Card className="p-0">
+        <Card className="p-0 border-gray-200 dark:border-gray-700">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Completed Orders</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -38,7 +38,7 @@ export default async function StatisticsPage() {
             <div className="text-2xl font-bold">{stats.totalCompletedOrders}</div>
           </CardContent>
         </Card>
-        <Card className="p-0">
+        <Card className="p-0 border-gray-200 dark:border-gray-700">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Average Order Value</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -49,7 +49,7 @@ export default async function StatisticsPage() {
         </Card>
       </div>
 
-      <Card className="p-0">
+   {/*<Card className="p-0 border-gray-200 dark:border-gray-700">
         <CardHeader>
           <CardTitle>Top Selling Products</CardTitle>
         </CardHeader>
@@ -71,7 +71,7 @@ export default async function StatisticsPage() {
             </TableBody>
           </Table>
         </CardContent>
-      </Card>
+      </Card>*/}
     </div>
   )
 }

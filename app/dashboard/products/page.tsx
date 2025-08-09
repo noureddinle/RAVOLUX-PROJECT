@@ -1,6 +1,6 @@
 import Link from "next/link"
 import Image from "next/image"
-import { Plus, MoreHorizontal, Filter } from 'lucide-react'
+import { MoreHorizontal, Filter } from 'lucide-react'
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { getProducts } from "@/lib/data"
+import ProductAction from "@/components/productAction"
 
 export default async function ProductsPage() {
   const products = await getProducts()
@@ -27,38 +28,35 @@ export default async function ProductsPage() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Products <span className="text-muted-foreground text-base font-normal">({products.length})</span></h1>
+        <h1 className="text-2xl font-bold">Products <span className="text-base font-normal text-gray-500">({products.length})</span></h1>
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="flex items-center gap-2">
+          <Button variant="outline" className="flex items-center gap-2 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-gray-800">
             <Filter className="h-4 w-4" />
             Filter
           </Button>
-          <Button asChild>
+          <Button asChild className="flex items-center gap-2 border border-gray-200 dark:border-gray-700 hover:bg-black hover:text-white dark:hover:bg-gray-800">
             <Link href="/dashboard/products/create">
-              <Plus className="h-4 w-4 mr-2" />
               Create new
             </Link>
           </Button>
         </div>
       </div>
-      <Card className="p-0">
+      <Card className="p-0 border-gray-200 dark:border-gray-700">
         <CardContent className="p-0">
-          <Table> 
+          <Table className="border-gray-200 dark:border-gray-700"> 
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[50px]">ID</TableHead>
-                <TableHead className="w-[80px] hidden md:table-cell">Image</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Price</TableHead>
-                <TableHead>Stock</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
+                <TableHead className="w-[80px] hidden md:table-cell border-b border-gray-200 dark:border-gray-700">Image</TableHead>
+                <TableHead className="border-b border-gray-200 dark:border-gray-700">Name</TableHead>
+                <TableHead className="border-b border-gray-200 dark:border-gray-700">Category</TableHead>
+                <TableHead className="border-b border-gray-200 dark:border-gray-700">Price</TableHead>
+                <TableHead className="border-b border-gray-200 dark:border-gray-700">Stock</TableHead>
+                <TableHead className="text-right border-b border-gray-200 dark:border-gray-700">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {products.map((product) => (
-                <TableRow key={product.id}>
-                  <TableCell className="font-medium">{product.id}</TableCell>
+                <TableRow key={product.id} className="border-b border-gray-200 dark:border-gray-700">
                   <TableCell className="hidden md:table-cell">
                     <Image
                       src={product.thumbnail_image || "/placeholder.svg"}
@@ -75,25 +73,11 @@ export default async function ProductsPage() {
                   <TableCell>${product.price.toFixed(2)}</TableCell>
                   <TableCell>
                     <Badge variant={product.stock_quantity > 0 ? "default" : "destructive"}>
-                      {product.stock_quantity > 0 ? `${product.stock_quantity} In Stock` : "Out of Stock"}
+                      {product.stock_quantity > 0 ? `${product.stock_quantity}` : "Out of Stock"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                          <span className="sr-only">Actions</span>
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem className="cursor-pointer" asChild>
-                          <Link href={`/dashboard/products/${product.id}`}>Show</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer">Edit</DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600 cursor-pointer">Delete</DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                  <TableCell className="text-right border-b border-gray-200 dark:border-gray-700">
+                    <ProductAction product={product} />
                   </TableCell>
                 </TableRow>
               ))}

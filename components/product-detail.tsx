@@ -247,34 +247,16 @@ export function ProductDetail() {
                 className="border border-gray-200 hover:bg-gray-100"
                 variant="outline"
                 size="lg"
-                onClick={handleWishlistToggle}
-                aria-label={isWishlisted ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
-              >
-                <Heart className={`h-5 w-5 ${isWishlisted ? "fill-current text-red-500" : ""}`} />
-              </Button>
-              <Button
-                className="border border-gray-200 hover:bg-gray-100"
-                variant="outline"
-                size="lg"
                 onClick={handleShare}
                 aria-label={`Share ${product.name}`}
               >
                 <Share2 className="h-5 w-5" />
               </Button>
             </div>
-            <Button
-              variant="outline"
-              size="lg"
-              className="w-full bg-transparent border border-gray-200 hover:bg-gray-100"
-              aria-label="Call for bulk pricing"
-            >
-              <Phone className="h-5 w-5 mr-2" />
-              Call for Bulk Pricing
-            </Button>
           </div>
           <Separator />
           {/* Features */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-24">
             <div className="flex items-center space-x-3 p-4 bg-green-50 rounded-lg">
               <Truck className="h-6 w-6 text-green-600" />
               <div>

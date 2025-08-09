@@ -14,13 +14,15 @@ import { Minus, Plus, Trash2, ShoppingBag, CreditCard, Banknote } from "lucide-r
 import { useCart } from "@/hooks/use-cart"
 import { toast } from "@/hooks/use-toast"
 import { Newsletter } from "@/components/newsletter"
+import { useRouter } from "next/navigation"
+
 
 export default function CartPage() {
   const { cart, updateCartItem, removeCartItem, loading } = useCart()
   const [paymentMethod, setPaymentMethod] = useState("cod")
   const [promoCode, setPromoCode] = useState("")
   const [discount, setDiscount] = useState(0)
-
+  const router = useRouter()
   const items = cart?.items || []
   const total = items.reduce((sum, item) => sum + (item.price_at_time * item.quantity), 0)
   const shipping = total > 500 ? 0 : 50
@@ -51,6 +53,8 @@ export default function CartPage() {
   }
 
   const handleCheckout = () => {
+    router.push('/checkout')
+
     if (items.length === 0) {
       toast({
         title: "Cart is empty",
@@ -59,7 +63,6 @@ export default function CartPage() {
       })
       return
     }
-
     const totalAmount = finalTotal.toFixed(2)
 
     toast({

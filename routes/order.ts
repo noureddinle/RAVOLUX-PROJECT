@@ -98,4 +98,30 @@ router.patch('/:id', async (req: Request, res: Response) => {
   }
 });
 
+// Delete order
+router.delete('/:id', async (req: Request, res: Response) => {
+  try {
+    const { error } = await supabase
+      .from('orders')
+      .delete()
+      .eq('id', req.params.id);
+
+    if (error) throw error;
+
+    res.status(200).json({
+      success: true,
+      data: null,
+      message: 'Order deleted successfully'
+    });
+    
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    res.status(500).json({
+      success: false,
+      data: null,
+      message: error instanceof Error ? error.message : 'Failed to delete order'
+    });
+  }
+});
+
 export default router;

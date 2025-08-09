@@ -44,7 +44,7 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-16">
+    <div className="container mx-auto px-4 py-16 bg-white border border-gray-200">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Contact Us</h1>
@@ -53,7 +53,7 @@ export default function ContactPage() {
 
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Contact Form */}
-          <Card>
+          <Card className="bg-white border border-gray-200">
             <CardHeader>
               <CardTitle>Send us a Message</CardTitle>
             </CardHeader>
@@ -64,6 +64,7 @@ export default function ContactPage() {
                     <Label htmlFor="name">Full Name</Label>
                     <Input
                       id="name"
+                      className="bg-white border border-gray-200 text-gray-500"
                       value={formData.name}
                       onChange={(e) => handleInputChange("name", e.target.value)}
                       placeholder="Your full name"
@@ -75,6 +76,7 @@ export default function ContactPage() {
                     <Input
                       id="email"
                       type="email"
+                      className="bg-white border border-gray-200 text-gray-500"
                       value={formData.email}
                       onChange={(e) => handleInputChange("email", e.target.value)}
                       placeholder="your@email.com"
@@ -89,6 +91,7 @@ export default function ContactPage() {
                     <Input
                       id="phone"
                       type="tel"
+                      className="bg-white border border-gray-200 text-gray-500"
                       value={formData.phone}
                       onChange={(e) => handleInputChange("phone", e.target.value)}
                       placeholder="Your phone number"
@@ -98,6 +101,7 @@ export default function ContactPage() {
                     <Label htmlFor="subject">Subject</Label>
                     <Input
                       id="subject"
+                      className="bg-white border border-gray-200 text-gray-500"
                       value={formData.subject}
                       onChange={(e) => handleInputChange("subject", e.target.value)}
                       placeholder="How can we help?"
@@ -110,6 +114,7 @@ export default function ContactPage() {
                   <Label htmlFor="message">Message</Label>
                   <Textarea
                     id="message"
+                    className="bg-white border border-gray-200 text-gray-500"
                     value={formData.message}
                     onChange={(e) => handleInputChange("message", e.target.value)}
                     placeholder="Tell us more about your requirements..."
@@ -118,7 +123,7 @@ export default function ContactPage() {
                   />
                 </div>
 
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full border border-gray-200 hover:bg-black hover:text-white">
                   Send Message
                 </Button>
               </form>
@@ -127,7 +132,7 @@ export default function ContactPage() {
 
           {/* Contact Information */}
           <div className="space-y-8">
-            <Card>
+            <Card className="bg-white border border-gray-200">
               <CardHeader>
                 <CardTitle>Get in Touch</CardTitle>
               </CardHeader>
@@ -135,7 +140,7 @@ export default function ContactPage() {
                 <div className="flex items-start space-x-4">
                   <MapPin className="h-6 w-6 text-primary mt-1" />
                   <div>
-                    <h3 className="font-semibold">Visit Our Showroom</h3>
+                    <h3 className="font-semibold">Visit Our Store</h3>
                     <p className="text-gray-600">
                       123 Lighting Boulevard
                       <br />
@@ -190,7 +195,7 @@ export default function ContactPage() {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-white border border-gray-200">
               <CardHeader>
                 <CardTitle>Emergency Support</CardTitle>
               </CardHeader>
@@ -198,7 +203,7 @@ export default function ContactPage() {
                 <p className="text-gray-600 mb-4">
                   Need urgent technical support? Our emergency hotline is available 24/7 for critical issues.
                 </p>
-                <Button className="w-full bg-transparent" variant="outline">
+                <Button className="w-full bg-transparent border border-gray-200 hover:bg-black hover:text-white" variant="outline">
                   <Phone className="h-4 w-4 mr-2" />
                   Call Emergency Support
                 </Button>
