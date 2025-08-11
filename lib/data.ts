@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { UserForm, Order, Product, OrderItem, OrderItemInsert, OrderItemUpdate, OrderItemDelete, NewsletterSubscription } from '@/types/supabase';
+import { UserForm, Order, Product, OrderItem, OrderItemInsert, OrderItemUpdate, OrderItemDelete, NewsletterSubscription, ProductInsert } from '@/types/supabase';
 
 // Dashboard Statistics
 export async function getDashboardStatistics() {
@@ -131,7 +131,7 @@ export async function getNewsletterSubscribers(): Promise<NewsletterSubscription
     const { data, error } = await supabase
       .from('newsletter_subscriptions')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('subscribed_at', { ascending: false });
 
     if (error) throw error;
     return data || [];
@@ -157,8 +157,43 @@ export async function getCustomers(): Promise<UserForm[]> {
   }
 }
 
+// Upload file to Supabase Storage
+export async function uploadFile(file: File, bucket: string = 'product-images'): Promise<string> {
+  try {
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`
+    const filePath = `${fileName}`
+
+    // Try to upload with current auth
+    const { error: uploadError } = await supabase.storage
+      .from(bucket)
+      .upload(filePath, file)
+
+    if (uploadError) {
+      console.error('Upload error details:', uploadError)
+      
+      // If it's an auth error, we need to handle it differently
+      if (uploadError.message.includes('row-level security policy')) {
+        throw new Error('Storage authentication required. Please update storage policies to allow public uploads or set up proper Supabase authentication.')
+      }
+      
+      throw uploadError
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(filePath)
+
+    return publicUrl
+  } catch (error) {
+    console.error('Error uploading file:', error)
+    throw error
+  }
+}
+
 // Create new product
-export async function createProduct(productData: any) {
+export async function createProduct(productData: ProductInsert) {
   try {
     const { data, error } = await supabase
       .from('products')

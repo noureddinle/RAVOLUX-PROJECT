@@ -85,7 +85,7 @@ export function Header() {
 
   return (
     <>
-      <header className={`sticky top-0 z-[100] w-full border-b border-slate-200 transition-all duration-300 bg-white`}>
+      <header className={`sticky top-0 z-[100] w-full shadow-sm transition-all duration-300 bg-white`}>
         {/* Main navigation */}
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-14 md:h-22">
@@ -111,9 +111,9 @@ export function Header() {
               {/* Cart */}
               <Link href="/cart" className="relative">
                 <Button variant="ghost" size="icon" className={`hover:bg-white/20 transition-colors `}>
-                  <ShoppingCart className="h-5 w-5 md:h-6 md:w-6 text-slate-500 hover:text-slate-900" />
+                  <ShoppingCart className="h-5 w-5 md:h-6 md:w-6 text-gray-500 hover:text-gray-900" />
                   {!cartLoading && itemCount > 0 && (
-                    <Badge className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs">
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 bg-gray-200 rounded-full p-0 flex items-center justify-center text-xs">
                       {itemCount}
                     </Badge>
                   )}

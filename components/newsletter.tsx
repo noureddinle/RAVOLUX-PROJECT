@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Mail, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { NewsletterSubscription, ApiResponse } from "@/types/supabase";
+import { API_URL } from "@/lib/api";
 
 export function Newsletter({ email }: { email?: string }) {
   const [emailValue, setEmailValue] = useState(email || "");
@@ -23,10 +24,20 @@ export function Newsletter({ email }: { email?: string }) {
       
       try {
         setError(null);
-        const response = await fetch(`/api/newsletter?email=${encodeURIComponent(emailValue)}`, {
+        
+        if (!API_URL) {
+          console.warn('API_URL is not configured');
+          return;
+        }
+        
+        const response = await fetch(`${API_URL}/api/newsletter?email=${encodeURIComponent(emailValue)}`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
         });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
         const result: ApiResponse<NewsletterSubscription[]> = await response.json();
 
@@ -59,11 +70,19 @@ export function Newsletter({ email }: { email?: string }) {
     }
 
     try {
-      const response = await fetch('/api/newsletter', {
+      if (!API_URL) {
+        throw new Error('API service is not available. Please try again later.');
+      }
+      
+      const response = await fetch(`${API_URL}/api/newsletter`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: emailValue, is_active: true }),
       });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
       const result: ApiResponse<NewsletterSubscription> = await response.json();
 

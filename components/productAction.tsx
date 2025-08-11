@@ -1,3 +1,5 @@
+"use client";
+
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
@@ -13,7 +15,6 @@ interface ProductActionProps {
   product: Product;
 }
 
-'use client';
 
 export default function ProductAction({ product }: ProductActionProps) {
   const router = useRouter();

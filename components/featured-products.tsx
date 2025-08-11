@@ -10,12 +10,14 @@ import { motion } from "framer-motion";
 import { Product, ApiResponse } from "@/types/supabase";
 import { toast } from "@/hooks/use-toast";
 import { API_URL } from "@/lib/api";
+import { useCart } from "@/hooks/use-cart";
 
 export function FeaturedProducts() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     setMounted(true);
@@ -53,35 +55,23 @@ export function FeaturedProducts() {
     fetchFeaturedProducts();
   }, []);
 
-  const handleAddToQuote = async (product: Product) => {
-    try {
-      const response = await fetch(`${API_URL}/api/carts`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: "",
-          session_id: "",
-          product_id: product.id,
-          quantity: 1,
-          price_at_time: product.price,
-        }),
-      });
-      const result = await response.json();
-      if (!response.ok || !result.success) {
-        throw new Error(result.message || "Failed to add to quote");
-      }
-      toast({
-        title: "Added to Quote",
-        description: `${product.name} has been added to your quote.`,
-      });
-    } catch (err: any) {
-      toast({
-        title: "Error",
-        description: err.message || "Failed to add to quote",
-        variant: "destructive",
-      });
-    }
-  };
+  const handleAddToCart = (product: Product) => {
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.thumbnail_image || "/placeholder.svg",
+      quantity: 1,
+      cart_id: "",
+      product_id: product.id,
+      price_at_time: product.price,
+      created_at: new Date().toISOString(),
+    })
+    toast({
+      title: "Added to Cart",
+      description: `${product.name} has been added to your cart.`,
+    });
+  }
 
   // Don't render anything until mounted to prevent hydration mismatch
   if (!mounted) {
@@ -179,15 +169,15 @@ export function FeaturedProducts() {
                     </div>
                   </CardContent>
                   <CardFooter className="p-6 pt-0 flex gap-2">
-                    <Button asChild variant="outline" size="sm" className="flex-1 bg-transparent">
-                      <Link href={`/products/${product.slug || product.id}`}>
+                    <Button asChild variant="outline" size="sm" className="flex-1 bg-transparent border-gray-200 hover:bg-gray-200">
+                      <Link href={`/products/${product.id}`}>
                         <Eye className="h-4 w-4 mr-2" />
-                        View Details
+                        View
                       </Link>
                     </Button>
-                    <Button size="sm" className="flex-1" onClick={() => handleAddToQuote(product)}>
+                    <Button size="sm" className="flex-1 bg-transparent hover:bg-blue-500 hover:text-white" onClick={() => handleAddToCart(product)}>
                       <ShoppingCart className="h-4 w-4 mr-2" />
-                      Add to Quote
+                      Add to Cart
                     </Button>
                   </CardFooter>
                 </Card>

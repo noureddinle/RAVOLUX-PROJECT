@@ -242,8 +242,6 @@ export interface NewsletterSubscription {
   is_active: boolean;
   subscribed_at: Timestamp;
   unsubscribed_at?: Timestamp;
-  created_at: Timestamp;
-  updated_at: Timestamp;
 }
 
 export interface NewsletterSubscriptionInsert {

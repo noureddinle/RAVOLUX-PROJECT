@@ -65,12 +65,7 @@ export default function CartPage() {
     }
     const totalAmount = finalTotal.toFixed(2)
 
-    toast({
-      title: "Order placed successfully!",
-      description: `Your order total is $${totalAmount}. ${
-        paymentMethod === "cod" ? "You will pay on delivery." : "Payment processed."
-      }`,
-    })
+
     // Note: clearCart functionality would need to be implemented in the new cart hook
   }
 

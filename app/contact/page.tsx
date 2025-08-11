@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { MapPin, Phone, Mail, Clock } from "lucide-react"
 import { toast } from "@/hooks/use-toast"
+import { ContactMessageInsert } from "@/types/supabase"
+import { API_URL } from "@/lib/api"
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -20,8 +22,47 @@ export default function ContactPage() {
     message: "",
   })
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    try {
+      const contactMessage: ContactMessageInsert = {
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+      }
+
+      const response = await fetch(`${API_URL}/api/contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(contactMessage),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed to send message: ${response.status}`)
+      }
+
+      const { data } = await response.json();
+
+      await fetch(`${API_URL}/api/email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          type: "contact-response",
+          to: formData.email,
+          data: {
+            contactMessage,
+            contactNumber: data.id,
+          }
+        }),
+      });
+    } catch (error) {
+      console.error("Error sending message:", error)
+    }
 
     // Simulate form submission
     toast({

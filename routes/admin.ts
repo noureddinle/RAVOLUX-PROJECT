@@ -22,7 +22,7 @@ router.get('/newsletter-subscribers', requireAdmin, async (req: Request, res: Re
     const { data, error } = await supabase
       .from('newsletter_subscriptions')
       .select('*')
-      .order('created_at', { ascending: false });
+      .order('subscribed_at', { ascending: false });
     
     if (error) throw error;
     res.json(data);

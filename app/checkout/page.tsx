@@ -1,5 +1,5 @@
-// src/components/CheckoutPage.tsx
 "use client";
+ 
 import type React from "react";
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -122,6 +122,23 @@ export default function CheckoutPage() {
       }
 
       const { data } = await response.json();
+
+      await fetch(`${API_URL}/api/email`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(user?.accessToken && { Authorization: `Bearer ${user.accessToken}` }),
+        },
+        body: JSON.stringify({
+          type: "order-confirmation",
+          to: formData.customer_email,
+          data: {
+            orderData,
+            orderNumber: orderData.order_number,
+            items: cart?.items || [],
+          }
+        }),
+      });
 
       toast({
         title: "Order Placed!",

@@ -23,7 +23,7 @@ export default async function NewsletterPage() {
                 <TableRow key={subscriber.id}>
                   <TableCell className="font-medium border-b border-gray-200 dark:border-gray-700">{subscriber.id}</TableCell>
                   <TableCell className="border-b border-gray-200 dark:border-gray-700">{subscriber.email}</TableCell>
-                  <TableCell className="border-b border-gray-200 dark:border-gray-700">{new Date(subscriber.created_at).toLocaleDateString()}</TableCell>
+                  <TableCell className="border-b border-gray-200 dark:border-gray-700">{new Date(subscriber.subscribed_at).toLocaleDateString()}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

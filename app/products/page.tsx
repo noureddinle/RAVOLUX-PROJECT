@@ -190,22 +190,17 @@ export default function ProductsPage() {
 
               <div className="flex items-center space-x-2 mb-4">
                 <div className="text-xl md:text-2xl font-bold text-primary">${product.price.toLocaleString()}</div>
-                {product.price && (
-                  <div className="text-sm md:text-lg text-gray-500 line-through">
-                    ${product.price.toLocaleString()}
-                  </div>
-                )}
               </div>
               <div className="flex gap-2">
                 <Link href={`/products/${product.id}`} className="flex-1">
-                  <Button variant="outline" size="sm" className="w-full bg-transparent text-xs md:text-sm">
+                  <Button variant="outline" size="sm" className="w-full bg-transparent text-xs md:text-sm border border-gray-200 hover:border-gray-200 hover:bg-gray-200">
                     <Eye className="h-3 w-3 md:h-4 md:w-4 mr-1 md:mr-2" />
                     View
                   </Button>
                 </Link>
                 <Button
                   size="sm"
-                  className="flex-1 text-xs md:text-sm"
+                  className="flex-1 text-xs md:text-sm bg-transparent hover:bg-blue-600 "
                   disabled={!product.in_stock}
                   onClick={() => handleAddToCart(product)}
                 >
