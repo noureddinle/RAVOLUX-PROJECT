@@ -44,22 +44,26 @@ export default function ContactPage() {
         throw new Error(`Failed to send message: ${response.status}`)
       }
 
-      const { data } = await response.json();
+      const responseData = await response.json();
+      const data = responseData;
 
-      await fetch(`${API_URL}/api/email`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          type: "contact-response",
-          to: formData.email,
-          data: {
-            contactMessage,
-            contactNumber: data.id,
-          }
-        }),
-      });
+      // Only send email if we have valid data
+      if (data && data.id) {
+        await fetch(`${API_URL}/api/email`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            type: "contact-response",
+            to: formData.email,
+            data: {
+              contactMessage,
+              contactNumber: data.id,
+            }
+          }),
+        });
+      }
     } catch (error) {
       console.error("Error sending message:", error)
     }

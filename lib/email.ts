@@ -137,12 +137,11 @@ export const emailTemplates = {
     }),
   };
 
-  // Email Service Class
 export class EmailService {
     static async sendWithResend(to: string, template: { subject: string; html: string }) {
       try {
         const { data, error } = await resend.emails.send({
-          from: process.env.FROM_EMAIL || 'noreply@yourwebsite.com',
+          from: process.env.FROM_EMAIL || 'onboarding@resend.dev',
           to: [to],
           subject: template.subject,
           html: template.html,
@@ -159,7 +158,6 @@ export class EmailService {
         throw error;
       }
     }
-    // Main send method (choose your preferred service)
     static async send(to: string, template: { subject: string; html: string }) {
       if (process.env.EMAIL_SERVICE === 'resend') {
         return this.sendWithResend(to, template);

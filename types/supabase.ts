@@ -61,11 +61,11 @@ export interface Product {
   id: UUID;
   name: string;
   sku: string;
-  category?: string;
+  category: string;
   price: number;
   stock_quantity: number;
   is_active: boolean;
-  description?: string;
+  description: string;
   specifications?: Record<string, string>;
   thumbnail_image?: string;
   images: string[];
@@ -77,7 +77,7 @@ export interface Product {
   brand?: string;
   is_new?: boolean;
   is_best_seller?: boolean;
-  model?: string;
+  model: string;
   features?: string[];
   is_featured?: boolean;
   in_stock?: boolean;
@@ -87,17 +87,18 @@ export interface Product {
 export interface ProductInsert {
   name: string;
   sku: string;
-  category?: string;
+  category: string;
   brand?: string;
-  model?: string;
+  model: string;
   price: number;
   stock_quantity?: number;
   is_active?: boolean;
   is_new?: boolean;
   is_best_seller?: boolean;
+  is_featured?: boolean;
   rating?: number;
   in_stock?: boolean;
-  description?: string;
+  description: string;
   specifications?: Record<string, string>;
   features?: string[];
   thumbnail_image?: string;

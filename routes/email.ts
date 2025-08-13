@@ -1,9 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { EmailService, emailTemplates } from '@/lib/email';
+import { Router, Request, Response } from 'express';
+import { EmailService, emailTemplates } from '../lib/email';
 
-export async function POST(request: NextRequest) {
+const router = Router();
+
+router.post('/', async (req: Request, res: Response) => {
   try {
-    const { type, to, data } = await request.json();
+    const { type, to, data } = req.body;
 
     let template;
     
@@ -24,20 +26,22 @@ export async function POST(request: NextRequest) {
         template = emailTemplates.passwordReset(data);
         break;
       default:
-        return NextResponse.json({ error: 'Invalid email type' }, { status: 400 });
+        return res.status(400).json({ error: 'Invalid email type' });
     }
 
     await EmailService.send(to, template);
 
-    return NextResponse.json({ 
+    res.json({ 
       success: true, 
       message: 'Email sent successfully' 
     });
   } catch (error) {
     console.error('Email API error:', error);
-    return NextResponse.json({ 
+    res.status(500).json({ 
       error: 'Failed to send email',
       details: error instanceof Error ? error.message : 'Unknown error'
-    }, { status: 500 });
+    });
   }
-}
+});
+
+export default router;

@@ -161,31 +161,41 @@ export async function getCustomers(): Promise<UserForm[]> {
 export async function uploadFile(file: File, bucket: string = 'product-images'): Promise<string> {
   try {
     const fileExt = file.name.split('.').pop()
-    const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
     const filePath = `${fileName}`
+
+    console.log('Attempting to upload file:', filePath)
 
     // Try to upload with current auth
     const { error: uploadError } = await supabase.storage
       .from(bucket)
-      .upload(filePath, file)
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      })
 
     if (uploadError) {
       console.error('Upload error details:', uploadError)
       
-      // If it's an auth error, we need to handle it differently
+      // Handle different types of errors
       if (uploadError.message.includes('row-level security policy')) {
-        throw new Error('Storage authentication required. Please update storage policies to allow public uploads or set up proper Supabase authentication.')
+        throw new Error(`Storage access denied. Please configure storage policies in Supabase dashboard.\n\nSteps:\n1. Go to Storage → Policies\n2. Add INSERT policy for bucket '${bucket}'\n3. Allow public or authenticated uploads`)
       }
       
-      throw uploadError
+      if (uploadError.message.includes('not found')) {
+        throw new Error(`Storage bucket '${bucket}' not found. Please create the bucket first.`)
+      }
+      
+      throw new Error(`Upload failed: ${uploadError.message}`)
     }
 
     // Get public URL
-    const { data: { publicUrl } } = supabase.storage
+    const { data } = supabase.storage
       .from(bucket)
       .getPublicUrl(filePath)
 
-    return publicUrl
+    console.log('File uploaded successfully:', data.publicUrl)
+    return data.publicUrl
   } catch (error) {
     console.error('Error uploading file:', error)
     throw error

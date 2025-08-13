@@ -11,6 +11,7 @@ import orderRoutes from './routes/order';
 import adminRoutes from './routes/admin';
 import contactRoutes from './routes/contact';
 import newsletterRoutes from './routes/newsletter';
+import emailRoutes from './routes/email';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
@@ -30,6 +31,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/newsletter', newsletterRoutes);
+app.use('/api/email', emailRoutes);
 app.use('/images', express.static('public/images'));
 
 // Start server
