@@ -89,12 +89,24 @@ export async function getOrders(): Promise<Order[]> {
 // Get all products
 export async function getProducts(): Promise<Product[]> {
   try {
+    console.log('Fetching products from database...');
     const { data, error } = await supabase
       .from('products')
       .select('*')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
+    
+    console.log('Products fetched:', data?.length || 0);
+    if (data && data.length > 0) {
+      console.log('Sample product:', {
+        id: data[0].id,
+        name: data[0].name,
+        thumbnail_image: data[0].thumbnail_image,
+        images: data[0].images
+      });
+    }
+    
     return data || [];
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -165,6 +177,8 @@ export async function uploadFile(file: File, bucket: string = 'product-images'):
     const filePath = `${fileName}`
 
     console.log('Attempting to upload file:', filePath)
+    console.log('File size:', file.size, 'bytes')
+    console.log('File type:', file.type)
 
     // Try to upload with current auth
     const { error: uploadError } = await supabase.storage
@@ -195,6 +209,20 @@ export async function uploadFile(file: File, bucket: string = 'product-images'):
       .getPublicUrl(filePath)
 
     console.log('File uploaded successfully:', data.publicUrl)
+    console.log('Full file path:', filePath)
+    console.log('Bucket:', bucket)
+    console.log('Public URL data:', data)
+    
+    // Verify the URL is accessible
+    try {
+      const response = await fetch(data.publicUrl, { method: 'HEAD' })
+      if (!response.ok) {
+        console.warn('Warning: Uploaded file may not be publicly accessible:', data.publicUrl)
+      }
+    } catch (fetchError) {
+      console.warn('Warning: Could not verify file accessibility:', fetchError)
+    }
+    
     return data.publicUrl
   } catch (error) {
     console.error('Error uploading file:', error)

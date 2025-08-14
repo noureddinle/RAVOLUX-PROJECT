@@ -11,6 +11,7 @@ export default function CreateProductPage() {
     sku: "",
     category: "",
     description: "",
+    features: [],
     price: 0,
     stock_quantity: 0,
     model: "",
@@ -148,6 +149,7 @@ export default function CreateProductPage() {
         sku: formData.sku.trim().toUpperCase(),
         category: formData.category.trim(),
         description: formData.description.trim(),
+        features: formData.features,
         price: parseFloat(formData.price as any) || 0,
         stock_quantity: parseInt(formData.stock_quantity as any) || 0,
         model: formData.model.trim(),
@@ -163,6 +165,7 @@ export default function CreateProductPage() {
 
       // Create product
       setUploadProgress(90);
+      console.log("Creating product with data:", productData);
       const newProduct = await createProduct(productData);
       console.log("Product created:", newProduct);
 
@@ -176,6 +179,7 @@ export default function CreateProductPage() {
           sku: "",
           category: "",
           description: "",
+          features: [],
           price: 0,
           stock_quantity: 0,
           model: "",
@@ -320,15 +324,15 @@ export default function CreateProductPage() {
             />
           </div>
           <div className="space-y-2">
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
-              Detailed Description
+            <label htmlFor="features" className="block text-sm font-medium text-gray-700">
+              Features
             </label>
             <textarea
-              id="description"
+              id="features"
               placeholder="Detailed product description, features, specifications..."
               rows={4}
-              value={formData.description}
-              onChange={(e) => handleInputChange("description", e.target.value)}
+              value={formData.features}
+              onChange={(e) => handleInputChange("features", e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
               disabled={isLoading}
             />
